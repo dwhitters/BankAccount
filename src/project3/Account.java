@@ -10,6 +10,15 @@ public abstract class Account implements Serializable {
 	private GregorianCalendar dateOpened;
 	private double balance;
 	
+	public Account(int number, String owner, GregorianCalendar dateOpened, double balance)
+	{
+		this.number = number;
+		this.owner = owner;
+		this.dateOpened = dateOpened;
+		this.balance = balance;
+	}
+	
+	
 	public int getNumber()
 	{
 		return this.number;
@@ -40,8 +49,10 @@ public abstract class Account implements Serializable {
 		return this.balance;
 	}
 	
-	public String toString()
+	public GregorianCalendar getDateOpened()
 	{
-		
+		return dateOpened;
 	}
+	
+	public abstract String toString();
 }
