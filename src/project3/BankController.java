@@ -1,6 +1,6 @@
 package project3;
 
-public class BankApplication {
+public class BankController {
 	public static void main(String [] args)
 	{
 		
