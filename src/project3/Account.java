@@ -53,6 +53,6 @@ public abstract class Account implements Serializable {
 	{
 		return dateOpened;
 	}
-	
+
 	public abstract String toString();
 }
