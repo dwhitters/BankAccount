@@ -16,11 +16,30 @@ public class BankGUI extends JFrame {
 	private JTextField[] textInputs = new JTextField[7];
 	
 	private JTable table;
+	private JScrollPane scrollPane;
+	private String[] columnNames = {"Number",
+            "Date Opened",
+            "Account Owner",
+            "Current Balance"};
+	
+	Object[][] data = {
+		    {"Kathy", "Smith",
+		     "Snowboarding", new Integer(5), new Boolean(false)},
+		    {"John", "Doe",
+		     "Rowing", new Integer(3), new Boolean(true)},
+		    {"Sue", "Black",
+		     "Knitting", new Integer(2), new Boolean(false)},
+		    {"Jane", "White",
+		     "Speed reading", new Integer(20), new Boolean(true)},
+		    {"Joe", "Brown",
+		     "Pool", new Integer(10), new Boolean(false)}
+		};
 	
 	public BankGUI(){
 		super("Bank Application");
 		int i = 0;
 		
+		table = new JTable(data, columnNames);
 		mainPanel = new JPanel();
 		tablePanel = new JPanel();
 		gridLabelPanel = new JPanel();
@@ -37,11 +56,12 @@ public class BankGUI extends JFrame {
 		
 		setup();
 		
+		setupJTable();
 		
 		
 		
 		
-		
+		tablePanel.add(scrollPane, BorderLayout.CENTER);
 		mainPanel.add(tablePanel, BorderLayout.NORTH);
 		mainPanel.add(gridLabelPanel, BorderLayout.WEST);
 		mainPanel.add(gridTextPanel, BorderLayout.CENTER);
@@ -62,6 +82,7 @@ public class BankGUI extends JFrame {
 		gridLabelPanel.setLayout(new GridLayout(8, 1));
 		gridTextPanel.setLayout(new GridLayout(8, 1));
 		boxPanel.setLayout(new BoxLayout(boxPanel, BoxLayout.Y_AXIS));
+		tablePanel.setLayout(new BorderLayout());
 		
 		tablePanel.setBackground(Color.BLACK);
 		boxPanel.setBackground(Color.DARK_GRAY);
@@ -101,5 +122,10 @@ public class BankGUI extends JFrame {
 		boxPanel.add(modifyButton[2]);
 		boxPanel.add(Box.createRigidArea(new Dimension(1,5)));
 		boxPanel.add(modifyButton[3]);
+	}
+	
+	private void setupJTable(){
+		scrollPane = new JScrollPane(table);
+		table.setFillsViewportHeight(true);
 	}
 }
