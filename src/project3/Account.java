@@ -4,7 +4,6 @@ import java.io.Serializable;
 import java.util.GregorianCalendar;
 
 public abstract class Account implements Serializable {
-	//sadkjlfhdlkjfhjlkadfjlkasnkjfdad
 	private static final long serialVersionUID = 1L;
 	private int number;
 	private String owner;
