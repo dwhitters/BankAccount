@@ -40,8 +40,5 @@ public abstract class Account implements Serializable {
 		return this.balance;
 	}
 	
-	public String toString()
-	{
-		
-	}
+	public abstract String toString();
 }
