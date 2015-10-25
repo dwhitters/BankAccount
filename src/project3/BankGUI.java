@@ -9,6 +9,12 @@ import java.util.GregorianCalendar;
 import javax.swing.*;
 
 public class BankGUI extends JFrame {
+	public JMenuBar menuBar;
+	private JMenu file;
+	private JMenu sort;
+	private JMenuItem[] fileItems;
+	private JMenuItem[] sortItems;
+	
 	private JPanel mainPanel;
 	private JPanel tablePanel;
 	private JPanel gridLabelPanel;
@@ -24,6 +30,7 @@ public class BankGUI extends JFrame {
 	private JFormattedTextField[] textInputs = new JFormattedTextField[7];
 	
 	private ButtonListener buttonListener;
+	private MenuListener menuListener;
 
 	private JTable table = new JTable();
 	private JScrollPane scrollPane;
@@ -45,6 +52,31 @@ public class BankGUI extends JFrame {
 		gridLabelPanel = new JPanel();
 		gridTextPanel = new JPanel();
 		boxPanel = new JPanel();
+		
+		menuBar = new JMenuBar();
+		
+		//fileMenu
+		file = new JMenu("File");
+		file.getAccessibleContext().setAccessibleDescription(
+		        "File Menu");
+		sort = new JMenu("Sort");
+		sort.getAccessibleContext().setAccessibleDescription(
+		        "Sort Menu");
+		
+		fileItems = new JMenuItem[7];
+		sortItems = new JMenuItem[3];
+		
+		//Instantiate all menu items
+		for(i = 0; i < 7; i++){
+			if(i < 3){
+				sortItems[i] = new JMenuItem();
+				sortItems[i].addActionListener(menuListener);
+			}
+			fileItems[i] = new JMenuItem();
+			fileItems[i].addActionListener(menuListener);
+		}
+		
+		
 		
 		//format text fields
 		textInputs [0] = new JFormattedTextField(integerFormat);
@@ -112,6 +144,18 @@ public class BankGUI extends JFrame {
 		
 		savings.addActionListener(buttonListener);
 		checking.addActionListener(buttonListener);
+		
+		fileItems[0].setText("Load From Binary...");
+		fileItems[1].setText("Save As Binary...");
+		fileItems[2].setText("Load From Text...");
+		fileItems[3].setText("Save As Text...");
+		fileItems[4].setText("Load From XML...");
+		fileItems[5].setText("Save As XML...");
+		fileItems[6].setText("Quit");
+		
+		sortItems[0].setText("Account Number");
+		sortItems[1].setText("Account Owner");
+		sortItems[2].setText("Date");
 
 		descriptLabels[0].setText("  Account Number:");
 		descriptLabels[1].setText("  Account Owner:");
@@ -150,6 +194,20 @@ public class BankGUI extends JFrame {
 		
 		//Start off with savings account checked, and Monthly Fee grayed out
 		textInputs[4].setEnabled(false);
+		
+		for(i = 0; i < 7; i++){
+			if(i < 3)
+				sort.add(sortItems[i]);
+			if(i == 2 || i == 4 || i == 6){
+				file.addSeparator();
+				file.add(fileItems[i]);
+			}
+			else
+				file.add(fileItems[i]);
+		}
+		
+		menuBar.add(file);
+		menuBar.add(sort);
 	}
 
 	private void setupJTable() {
@@ -163,6 +221,41 @@ public class BankGUI extends JFrame {
 	private void clear()
 	{
 		
+	}
+	
+	private class MenuListener implements ActionListener{
+		public void actionPerformed(ActionEvent event){
+			if(event.getSource() == fileItems[0]){
+				//Binary Load
+			}
+			if(event.getSource() == fileItems[1]){
+					//Binary Save		
+			}
+			if(event.getSource() == fileItems[2]){
+				//Text Load
+			}
+			if(event.getSource() == fileItems[3]){
+				//text save
+			}
+			if(event.getSource() == fileItems[4]){
+				//XML load
+			}
+			if(event.getSource() == fileItems[5]){
+				//XML save
+			}
+			if(event.getSource() == fileItems[6]){
+				//quit
+			}
+			if(event.getSource() == sortItems[0]){
+				//sort by account number
+			}
+			if(event.getSource() == sortItems[0]){
+				//sort by account owner
+			}
+			if(event.getSource() == sortItems[0]){
+				//sort by date
+			}
+		}
 	}
 
 	private class ButtonListener implements ActionListener {
