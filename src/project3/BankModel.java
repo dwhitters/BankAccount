@@ -41,8 +41,8 @@ public class BankModel extends AbstractTableModel {
 		this.fireTableDataChanged();
 	}
 
-	public void update() {
-
+	public Account update(int row) {
+		return accounts.get(row);
 	}
 
 	@Override

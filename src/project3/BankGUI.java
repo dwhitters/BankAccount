@@ -4,9 +4,11 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.text.NumberFormat;
+import java.text.ParseException;
 import java.util.GregorianCalendar;
 
 import javax.swing.*;
+import javax.swing.text.MaskFormatter;
 
 public class BankGUI extends JFrame {
 	private JPanel mainPanel;
@@ -31,8 +33,9 @@ public class BankGUI extends JFrame {
 	private BankModel model;
 	
 	private NumberFormat integerFormat  = NumberFormat.getIntegerInstance();
-	private NumberFormat percentFormat  = NumberFormat.getPercentInstance();
-	private NumberFormat currencyFormat  = NumberFormat.getCurrencyInstance();
+	private NumberFormat percentFormat  = NumberFormat.getNumberInstance();
+	private NumberFormat currencyFormat  = NumberFormat.getNumberInstance();
+	private MaskFormatter characterFormat;
 
 	public BankGUI() {
 		super("Bank Application");
@@ -46,13 +49,24 @@ public class BankGUI extends JFrame {
 		gridTextPanel = new JPanel();
 		boxPanel = new JPanel();
 		
+		//formats
+		currencyFormat.setMaximumFractionDigits(2);
+		percentFormat.setMaximumFractionDigits(3);
+		try {
+			characterFormat = new MaskFormatter("??????????????????????????????");
+		} catch (ParseException e) {
+			//do nothing
+		}
+		
+		
+		
 		//format text fields
 		textInputs [0] = new JFormattedTextField(integerFormat);
-		textInputs [1] = new JFormattedTextField();
+		textInputs [1] = new JFormattedTextField(characterFormat);
 		textInputs [2] = new JFormattedTextField();
 		textInputs [3] = new JFormattedTextField(currencyFormat);
 		textInputs [4] = new JFormattedTextField(currencyFormat);
-		textInputs [5] = new JFormattedTextField(currencyFormat);
+		textInputs [5] = new JFormattedTextField(percentFormat);
 		textInputs [6] = new JFormattedTextField(currencyFormat);
 
 		savings = new JRadioButton("Savings", true);
@@ -162,7 +176,34 @@ public class BankGUI extends JFrame {
 	
 	private void clear()
 	{
-		
+		for (int i = 0; i <7; i++)
+		{
+			textInputs [i].setText("");
+		}
+	}
+	
+	private void update(Account accountData)
+	{
+		if (accountData instanceof SavingsAccount)
+		{
+			textInputs [0].setText(Integer.toString(accountData.getAccountNumber()));
+			textInputs [1].setText(accountData.getOwner());
+			textInputs [2].setText("");
+			textInputs [3].setText(Double.toString(accountData.getBalance()));
+			textInputs [4].setText("0");
+			textInputs [5].setText(Double.toString(((SavingsAccount)accountData).getInterestRate()));
+			textInputs [6].setText(Double.toString(((SavingsAccount)accountData).getMinimumBalance()));
+		}
+		if (accountData instanceof CheckingAccount)
+		{
+			textInputs [0].setText(Integer.toString(accountData.getAccountNumber()));
+			textInputs [1].setText(accountData.getOwner());
+			textInputs [2].setText("");
+			textInputs [3].setText(Double.toString(accountData.getBalance()));
+			textInputs [4].setText(Double.toString(((CheckingAccount)accountData).getMonthlyFee()));
+			textInputs [5].setText("0");
+			textInputs [6].setText("0");
+		}
 	}
 
 	private class ButtonListener implements ActionListener {
@@ -189,7 +230,7 @@ public class BankGUI extends JFrame {
 			}
 			if (event.getSource() == modifyButton[2])
 			{
-				model.update();
+				update(model.update());
 			}
 			if (event.getSource() == modifyButton[3])
 			{
