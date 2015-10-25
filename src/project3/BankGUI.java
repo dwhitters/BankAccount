@@ -3,126 +3,111 @@ package project3;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.text.NumberFormat;
-import java.text.ParseException;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
 import java.util.GregorianCalendar;
-
 import javax.swing.*;
-import javax.swing.text.MaskFormatter;
 
 public class BankGUI extends JFrame {
+
+	// menu variables
 	public JMenuBar menuBar;
 	private JMenu file;
 	private JMenu sort;
 	private JMenuItem[] fileItems;
 	private JMenuItem[] sortItems;
-	
+
+	// panel variables
 	private JPanel mainPanel;
 	private JPanel tablePanel;
 	private JPanel gridLabelPanel;
 	private JPanel gridTextPanel;
 	private JPanel boxPanel;
-	
+
+	// button variables
 	private JRadioButton savings;
 	private JRadioButton checking;
 	private ButtonGroup group;
-
 	private JButton[] modifyButton = new JButton[4];
 	private JLabel[] descriptLabels = new JLabel[7];
 	private JFormattedTextField[] textInputs = new JFormattedTextField[7];
-	
+
+	// listener variables
 	private ButtonListener buttonListener;
 	private MenuListener menuListener;
+	private TableListener tableListener;
 
+	// table variables
 	private JTable table = new JTable();
 	private JScrollPane scrollPane;
 
-	private BankModel model;
-	
-	private NumberFormat integerFormat  = NumberFormat.getIntegerInstance();
-	private NumberFormat percentFormat  = NumberFormat.getNumberInstance();
-	private NumberFormat currencyFormat  = NumberFormat.getNumberInstance();
-	private MaskFormatter characterFormat;
+	// bank model
+	private BankModel bankModel;
+
+	// format variables
+	private SimpleDateFormat dateFormat = new SimpleDateFormat(
+			"dd/MM/yyyy");
 
 	public BankGUI() {
+		// title
 		super("Bank Application");
-		int i = 0;
 
-		model = new BankModel();
+		// setup model
+		bankModel = new BankModel();
 
+		// instantiate panels
 		mainPanel = new JPanel();
 		tablePanel = new JPanel();
 		gridLabelPanel = new JPanel();
 		gridTextPanel = new JPanel();
 		boxPanel = new JPanel();
-		
-<<<<<<< HEAD
 
-=======
->>>>>>> 6fd1ca886d51cf0a6fedfbd6415c4cdaaf71fbef
-		//formats
-		currencyFormat.setMaximumFractionDigits(2);
-		percentFormat.setMaximumFractionDigits(3);
-		try {
-			characterFormat = new MaskFormatter("??????????????????????????????");
-<<<<<<< HEAD
-		} catch (ParseException e) {
-			//do nothing
-		}
-=======
-		} catch (ParseException e) {}
-		
->>>>>>> 6fd1ca886d51cf0a6fedfbd6415c4cdaaf71fbef
+		// format text fields
+		formatTextFields();
+
+		// file menu
 		menuBar = new JMenuBar();
-		
-		//fileMenu
+
 		file = new JMenu("File");
-		file.getAccessibleContext().setAccessibleDescription(
-		        "File Menu");
+		file.getAccessibleContext()
+				.setAccessibleDescription("File Menu");
 		sort = new JMenu("Sort");
-		sort.getAccessibleContext().setAccessibleDescription(
-		        "Sort Menu");
-		
+		sort.getAccessibleContext()
+				.setAccessibleDescription("Sort Menu");
+
 		fileItems = new JMenuItem[7];
 		sortItems = new JMenuItem[3];
-		
-		//Instantiate all menu items
-		for(i = 0; i < 7; i++){
-			if(i < 3){
+
+		// instantiate all menu items
+		for (int i = 0; i < 7; i++) {
+			if (i < 3) {
 				sortItems[i] = new JMenuItem();
 				sortItems[i].addActionListener(menuListener);
 			}
 			fileItems[i] = new JMenuItem();
 			fileItems[i].addActionListener(menuListener);
 		}
-		
-		
-		
-		//format text fields
-		textInputs [0] = new JFormattedTextField(integerFormat);
-		textInputs [1] = new JFormattedTextField(characterFormat);
-		textInputs [2] = new JFormattedTextField();
-		textInputs [3] = new JFormattedTextField(currencyFormat);
-		textInputs [4] = new JFormattedTextField(currencyFormat);
-		textInputs [5] = new JFormattedTextField(percentFormat);
-		textInputs [6] = new JFormattedTextField(currencyFormat);
 
 		savings = new JRadioButton("Savings", true);
 		checking = new JRadioButton("Checking", false);
 		group = new ButtonGroup();
 
-		for (i = 0; i < 7; i++) {
+		for (int i = 0; i < 7; i++) {
 			descriptLabels[i] = new JLabel();
-			//textInputs[i] = new JFormattedTextField();
 		}
-		for (i = 0; i < 4; i++) {
+		for (int i = 0; i < 4; i++) {
 			modifyButton[i] = new JButton();
 		}
 
-		setup();
+		// setup GUI
+		setupGUI();
 
-		setupJTable();
+		// setup table
+		setupTable();
 
+		// add panels to frame
 		tablePanel.add(scrollPane, BorderLayout.CENTER);
 		mainPanel.add(tablePanel, BorderLayout.NORTH);
 		mainPanel.add(gridLabelPanel, BorderLayout.WEST);
@@ -131,7 +116,29 @@ public class BankGUI extends JFrame {
 		add(mainPanel);
 	}
 
-	private void setup() {
+	private void formatTextFields() {
+
+		// format variables
+		DecimalFormat integerFormat = new DecimalFormat();
+		DecimalFormat percentFormat = new DecimalFormat();
+		DecimalFormat currencyFormat = new DecimalFormat();
+
+		// apply patters
+		integerFormat.applyPattern("#");
+		currencyFormat.applyPattern("#.##");
+		percentFormat.applyPattern("#.###");
+
+		// apply formats
+		textInputs[0] = new JFormattedTextField(integerFormat);
+		textInputs[1] = new JFormattedTextField();
+		textInputs[2] = new JFormattedTextField(dateFormat);
+		textInputs[3] = new JFormattedTextField(currencyFormat);
+		textInputs[4] = new JFormattedTextField(currencyFormat);
+		textInputs[5] = new JFormattedTextField(percentFormat);
+		textInputs[6] = new JFormattedTextField(currencyFormat);
+	}
+
+	private void setupGUI() {
 
 		int i = 0;
 
@@ -161,10 +168,10 @@ public class BankGUI extends JFrame {
 		modifyButton[1].addActionListener(buttonListener);
 		modifyButton[2].addActionListener(buttonListener);
 		modifyButton[3].addActionListener(buttonListener);
-		
+
 		savings.addActionListener(buttonListener);
 		checking.addActionListener(buttonListener);
-		
+
 		fileItems[0].setText("Load From Binary...");
 		fileItems[1].setText("Save As Binary...");
 		fileItems[2].setText("Load From Text...");
@@ -172,7 +179,7 @@ public class BankGUI extends JFrame {
 		fileItems[4].setText("Load From XML...");
 		fileItems[5].setText("Save As XML...");
 		fileItems[6].setText("Quit");
-		
+
 		sortItems[0].setText("Account Number");
 		sortItems[1].setText("Account Owner");
 		sortItems[2].setText("Date");
@@ -208,153 +215,294 @@ public class BankGUI extends JFrame {
 		boxPanel.add(modifyButton[2]);
 		boxPanel.add(Box.createRigidArea(new Dimension(1, 5)));
 		boxPanel.add(modifyButton[3]);
-		
+
 		group.add(savings);
 		group.add(checking);
-		
-		//Start off with savings account checked, and Monthly Fee grayed out
+
+		// Start off with savings account checked, and Monthly Fee
+		// grayed out
+		textInputs[4].setText("");
 		textInputs[4].setEnabled(false);
-		
-		for(i = 0; i < 7; i++){
-			if(i < 3)
+
+		for (i = 0; i < 7; i++) {
+			if (i < 3)
 				sort.add(sortItems[i]);
-			if(i == 2 || i == 4 || i == 6){
+			if (i == 2 || i == 4 || i == 6) {
 				file.addSeparator();
 				file.add(fileItems[i]);
-			}
-			else
+			} else
 				file.add(fileItems[i]);
 		}
-		
+
 		menuBar.add(file);
 		menuBar.add(sort);
 	}
 
-	private void setupJTable() {
+	private void setupTable() {
 
 		// setup table
-		table = new JTable(model);
+		table = new JTable(bankModel);
 		scrollPane = new JScrollPane(table);
 		table.setFillsViewportHeight(true);
+
+		// listener
+		tableListener = new TableListener();
+		table.addMouseListener(tableListener);
 	}
-	
-	private void clear()
-	{
-		for (int i = 0; i <7; i++)
-		{
-			textInputs [i].setText("");
-		}
-	}
-	
-	private void update(Account accountData)
-	{
-		if (accountData instanceof SavingsAccount)
-		{
-			textInputs [0].setText(Integer.toString(accountData.getAccountNumber()));
-			textInputs [1].setText(accountData.getOwner());
-			textInputs [2].setText("");
-			textInputs [3].setText(Double.toString(accountData.getBalance()));
-			textInputs [4].setText("0");
-			textInputs [5].setText(Double.toString(((SavingsAccount)accountData).getInterestRate()));
-			textInputs [6].setText(Double.toString(((SavingsAccount)accountData).getMinimumBalance()));
-		}
-		if (accountData instanceof CheckingAccount)
-		{
-			textInputs [0].setText(Integer.toString(accountData.getAccountNumber()));
-			textInputs [1].setText(accountData.getOwner());
-			textInputs [2].setText("");
-			textInputs [3].setText(Double.toString(accountData.getBalance()));
-			textInputs [4].setText(Double.toString(((CheckingAccount)accountData).getMonthlyFee()));
-			textInputs [5].setText("0");
-			textInputs [6].setText("0");
+
+	private void clear() {
+
+		// empty all text fields
+		for (int i = 0; i < 7; i++) {
+			textInputs[i].setText("");
 		}
 	}
-	
-	private class MenuListener implements ActionListener{
-		public void actionPerformed(ActionEvent event){
-			if(event.getSource() == fileItems[0]){
-				//Binary Load
+
+	private void updateFields(Account accountData) {
+
+		if (accountData instanceof SavingsAccount) {
+			textInputs[0].setText(
+					Integer.toString(accountData.getAccountNumber()));
+			textInputs[1].setText(accountData.getOwner());
+			textInputs[2].setText(dateFormat
+					.format(accountData.getDateOpened().getTime()));
+			textInputs[3]
+					.setText(Double.toString(accountData.getBalance()));
+			textInputs[5].setText(Double.toString(
+					((SavingsAccount) accountData).getInterestRate()));
+			textInputs[6].setText(
+					Double.toString(((SavingsAccount) accountData)
+							.getMinimumBalance()));
+			savings.doClick();
+		}
+		if (accountData instanceof CheckingAccount) {
+			textInputs[0].setText(
+					Integer.toString(accountData.getAccountNumber()));
+			textInputs[1].setText(accountData.getOwner());
+			textInputs[2].setText("DATE");
+			textInputs[3]
+					.setText(Double.toString(accountData.getBalance()));
+			textInputs[4].setText(Double.toString(
+					((CheckingAccount) accountData).getMonthlyFee()));
+			checking.doClick();
+		}
+	}
+
+	private class MenuListener implements ActionListener {
+		public void actionPerformed(ActionEvent event) {
+
+			if (event.getSource() == fileItems[0]) {
+				// Binary Load
 			}
-			if(event.getSource() == fileItems[1]){
-					//Binary Save		
+			if (event.getSource() == fileItems[1]) {
+				// Binary Save
 			}
-			if(event.getSource() == fileItems[2]){
-				//Text Load
+			if (event.getSource() == fileItems[2]) {
+				// Text Load
 			}
-			if(event.getSource() == fileItems[3]){
-				//text save
+			if (event.getSource() == fileItems[3]) {
+				// text save
 			}
-			if(event.getSource() == fileItems[4]){
-				//XML load
+			if (event.getSource() == fileItems[4]) {
+				// XML load
 			}
-			if(event.getSource() == fileItems[5]){
-				//XML save
+			if (event.getSource() == fileItems[5]) {
+				// XML save
 			}
-			if(event.getSource() == fileItems[6]){
-				//quit
+			if (event.getSource() == fileItems[6]) {
+				// quit
 			}
-			if(event.getSource() == sortItems[0]){
-				//sort by account number
+			if (event.getSource() == sortItems[0]) {
+				// sort by account number
 			}
-			if(event.getSource() == sortItems[0]){
-				//sort by account owner
+			if (event.getSource() == sortItems[0]) {
+				// sort by account owner
 			}
-			if(event.getSource() == sortItems[0]){
-				//sort by date
+			if (event.getSource() == sortItems[0]) {
+				// sort by date
 			}
 		}
+	}
+
+	private class TableListener implements MouseListener {
+
+		@Override
+		public void mouseClicked(MouseEvent arg0) {
+			updateFields(bankModel.getAccountInRow(table.getSelectedRow()));
+		}
+
+		@Override
+		public void mouseEntered(MouseEvent arg0) {
+
+			//do nothing
+		}
+
+		@Override
+		public void mouseExited(MouseEvent arg0) {
+
+			// do nothing
+		}
+
+		@Override
+		public void mousePressed(MouseEvent arg0) {
+
+			updateFields(bankModel.getAccountInRow(table.getSelectedRow()));
+		}
+
+		@Override
+		public void mouseReleased(MouseEvent e) {
+
+			// do nothing
+		}
+
 	}
 
 	private class ButtonListener implements ActionListener {
 
 		public void actionPerformed(ActionEvent event) {
-			if (event.getSource() == modifyButton[0])
-			{
-				int number = Integer.parseInt(textInputs [0].getText());
-				String owner = textInputs [1].getText();
-				String dateOpenedString = textInputs [2].getText();
-				int month = Integer.parseInt(dateOpenedString.substring(0, 2));
-				int day = Integer.parseInt(dateOpenedString.substring(3, 5));
-				int year = Integer.parseInt(dateOpenedString.substring(6, 10));
-				GregorianCalendar dateOpened = new GregorianCalendar(year, month, day);
-				double accountBalance = Double.parseDouble(textInputs [3].getText());
-				double monthlyFee = Double.parseDouble(textInputs [4].getText());
-				double interestRate = Double.parseDouble(textInputs [5].getText());
-				double minimumBalance = Double.parseDouble(textInputs [6].getText());
-				model.add(number, owner, dateOpened, accountBalance, monthlyFee, interestRate, minimumBalance);
-			}
-			if (event.getSource() == modifyButton[1])
-			{
-				model.delete(table.getSelectedRow());
-			}
-			if (event.getSource() == modifyButton[2])
-			{
-<<<<<<< HEAD
-				update(model.update(table.getSelectedRow()));
-=======
-				//update(model.update());
->>>>>>> 6fd1ca886d51cf0a6fedfbd6415c4cdaaf71fbef
-			}
-			if (event.getSource() == modifyButton[3])
-			{
-				clear();
-			}
-			if(event.getSource() == savings)
-			{
-				int i = 0;
-				for(i = 0; i < 7; i++){
-					if(i != 4)
-						textInputs[i].setEnabled(true);
-					else
-						textInputs[i].setEnabled(false);
+
+			if (event.getSource() == modifyButton[0]) {
+				// add new account
+				try {
+					// declare variables
+					double monthlyFee;
+					double interestRate;
+					double minimumBalance;
+					boolean isSavings = savings.isSelected();
+
+					// get information from text fields
+					int number = Integer
+							.parseInt(textInputs[0].getText());
+					String owner = textInputs[1].getText();
+					String dateOpenedString = textInputs[2].getText();
+					int month = Integer
+							.parseInt(dateOpenedString.substring(0, 2));
+					int day = Integer
+							.parseInt(dateOpenedString.substring(3, 5));
+					int year = Integer.parseInt(
+							dateOpenedString.substring(6, 10));
+					GregorianCalendar dateOpened = new GregorianCalendar(
+							year, month, day);
+					double accountBalance = Double
+							.parseDouble(textInputs[3].getText());
+					try {
+						monthlyFee = Double
+								.parseDouble(textInputs[4].getText());
+					} catch (Exception e) {
+						monthlyFee = 0;
+					}
+					try {
+						interestRate = Double
+								.parseDouble(textInputs[5].getText());
+					} catch (Exception e) {
+						interestRate = 0;
+					}
+					try {
+						minimumBalance = Double
+								.parseDouble(textInputs[6].getText());
+					} catch (Exception e) {
+						minimumBalance = 0;
+					}
+
+					// send collected data to bankModel
+					bankModel.add(number, owner, dateOpened,
+							accountBalance, monthlyFee, interestRate,
+							minimumBalance, isSavings);
+				} catch (Exception e) {
+					// display error message to user
+					JOptionPane.showMessageDialog(null,
+							"Data formatted incorrectly.\nPlease try again.",
+							"Error", JOptionPane.INFORMATION_MESSAGE);
 				}
 			}
-			if(event.getSource() == checking){
-				int i = 0;
-				for(i = 0; i < 7; i++){
-					if(i == 5 || i == 6)
+			if (event.getSource() == modifyButton[1]) {
+				// delete selected row
+				try {
+					bankModel.delete(table.getSelectedRow());
+				} catch (Exception e) {
+					// display error message to user
+					JOptionPane.showMessageDialog(null,
+							"No account is selected.\nPlease select an account and try again.",
+							"Error", JOptionPane.INFORMATION_MESSAGE);
+				}
+			}
+			if (event.getSource() == modifyButton[2]) {
+				// update selected account
+				try {
+					// declare variables
+					double monthlyFee;
+					double interestRate;
+					double minimumBalance;
+					boolean isSavings = savings.isSelected();
+
+					// get information from text fields
+					int number = Integer
+							.parseInt(textInputs[0].getText());
+					String owner = textInputs[1].getText();
+					String dateOpenedString = textInputs[2].getText();
+					int month = Integer
+							.parseInt(dateOpenedString.substring(0, 2));
+					int day = Integer
+							.parseInt(dateOpenedString.substring(3, 5));
+					int year = Integer.parseInt(
+							dateOpenedString.substring(6, 10));
+					GregorianCalendar dateOpened = new GregorianCalendar(
+							year, month, day);
+					double accountBalance = Double
+							.parseDouble(textInputs[3].getText());
+					try {
+						monthlyFee = Double
+								.parseDouble(textInputs[4].getText());
+					} catch (Exception e) {
+						monthlyFee = 0;
+					}
+					try {
+						interestRate = Double
+								.parseDouble(textInputs[5].getText());
+					} catch (Exception e) {
+						interestRate = 0;
+					}
+					try {
+						minimumBalance = Double
+								.parseDouble(textInputs[6].getText());
+					} catch (Exception e) {
+						minimumBalance = 0;
+					}
+
+					// send all collected data to bankModel
+					bankModel.update(number, owner, dateOpened,
+							accountBalance, monthlyFee, interestRate,
+							minimumBalance, isSavings,
+							table.getSelectedRow());
+				} catch (Exception e) {
+					// display error message to user
+					JOptionPane.showMessageDialog(null,
+							"No account is selected to update.\nPlease select an account and try again.",
+							"Error", JOptionPane.INFORMATION_MESSAGE);
+				}
+			}
+			if (event.getSource() == modifyButton[3]) {
+				// clear all text fields
+				clear();
+			}
+			if (event.getSource() == savings) {
+				// adjust GUI for savings account
+				for (int i = 0; i < 7; i++) {
+					if (i != 4)
+						textInputs[i].setEnabled(true);
+					else {
+						textInputs[i].setText("");
 						textInputs[i].setEnabled(false);
-					else
+					}
+				}
+			}
+			if (event.getSource() == checking) {
+				// adjust GUI for checking account
+				for (int i = 0; i < 7; i++) {
+					if (i == 5 || i == 6) {
+						textInputs[i].setEnabled(false);
+						textInputs[i].setText("");
+					} else
 						textInputs[i].setEnabled(true);
 				}
 			}
