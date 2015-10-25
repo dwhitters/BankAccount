@@ -3,6 +3,7 @@ package project3;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.text.NumberFormat;
 import java.util.GregorianCalendar;
 
 import javax.swing.*;
@@ -16,7 +17,7 @@ public class BankGUI extends JFrame {
 
 	private JButton[] modifyButton = new JButton[4];
 	private JLabel[] descriptLabels = new JLabel[7];
-	private JTextField[] textInputs = new JTextField[7];
+	private JFormattedTextField[] textInputs = new JFormattedTextField[7];
 	
 	private ButtonListener buttonListener;
 
@@ -24,6 +25,10 @@ public class BankGUI extends JFrame {
 	private JScrollPane scrollPane;
 
 	private BankModel model;
+	
+	private NumberFormat integerFormat  = NumberFormat.getIntegerInstance();
+	private NumberFormat percentFormat  = NumberFormat.getPercentInstance();
+	private NumberFormat currencyFormat  = NumberFormat.getCurrencyInstance();
 
 	public BankGUI() {
 		super("Bank Application");
@@ -36,10 +41,19 @@ public class BankGUI extends JFrame {
 		gridLabelPanel = new JPanel();
 		gridTextPanel = new JPanel();
 		boxPanel = new JPanel();
+		
+		//format text fields
+		textInputs [0] = new JFormattedTextField(integerFormat);
+		textInputs [1] = new JFormattedTextField();
+		textInputs [2] = new JFormattedTextField();
+		textInputs [3] = new JFormattedTextField(currencyFormat);
+		textInputs [4] = new JFormattedTextField(currencyFormat);
+		textInputs [5] = new JFormattedTextField(currencyFormat);
+		textInputs [6] = new JFormattedTextField(currencyFormat);
 
 		for (i = 0; i < 7; i++) {
 			descriptLabels[i] = new JLabel();
-			textInputs[i] = new JTextField();
+			//textInputs[i] = new JFormattedTextField();
 		}
 		for (i = 0; i < 4; i++) {
 			modifyButton[i] = new JButton();
