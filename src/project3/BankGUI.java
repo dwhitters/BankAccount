@@ -13,6 +13,10 @@ public class BankGUI extends JFrame {
 	private JPanel gridLabelPanel;
 	private JPanel gridTextPanel;
 	private JPanel boxPanel;
+	
+	private JRadioButton savings;
+	private JRadioButton checking;
+	private ButtonGroup group;
 
 	private JButton[] modifyButton = new JButton[4];
 	private JLabel[] descriptLabels = new JLabel[7];
@@ -36,6 +40,10 @@ public class BankGUI extends JFrame {
 		gridLabelPanel = new JPanel();
 		gridTextPanel = new JPanel();
 		boxPanel = new JPanel();
+		
+		savings = new JRadioButton("Savings", true);
+		checking = new JRadioButton("Checking", false);
+		group = new ButtonGroup();
 
 		for (i = 0; i < 7; i++) {
 			descriptLabels[i] = new JLabel();
@@ -87,6 +95,9 @@ public class BankGUI extends JFrame {
 		modifyButton[1].addActionListener(buttonListener);
 		modifyButton[2].addActionListener(buttonListener);
 		modifyButton[3].addActionListener(buttonListener);
+		
+		savings.addActionListener(buttonListener);
+		checking.addActionListener(buttonListener);
 
 		descriptLabels[0].setText("  Account Number:");
 		descriptLabels[1].setText("  Account Owner:");
@@ -97,8 +108,8 @@ public class BankGUI extends JFrame {
 		descriptLabels[6].setText("  Minimum Balance:");
 
 		// Empty grid cells waiting for radio buttons
-		gridLabelPanel.add(new JLabel());
-		gridTextPanel.add(new JLabel());
+		gridLabelPanel.add(checking);
+		gridTextPanel.add(savings);
 
 		for (i = 0; i < 7; i++) {
 			gridLabelPanel.add(descriptLabels[i]);
@@ -119,6 +130,12 @@ public class BankGUI extends JFrame {
 		boxPanel.add(modifyButton[2]);
 		boxPanel.add(Box.createRigidArea(new Dimension(1, 5)));
 		boxPanel.add(modifyButton[3]);
+		
+		group.add(savings);
+		group.add(checking);
+		
+		//Start off with savings account checked, and Monthly Fee grayed out
+		textInputs[4].setEnabled(false);
 	}
 
 	private void setupJTable() {
@@ -163,6 +180,25 @@ public class BankGUI extends JFrame {
 			if (event.getSource() == modifyButton[3])
 			{
 				clear();
+			}
+			if(event.getSource() == savings)
+			{
+				int i = 0;
+				for(i = 0; i < 7; i++){
+					if(i != 4)
+						textInputs[i].setEnabled(true);
+					else
+						textInputs[i].setEnabled(false);
+				}
+			}
+			if(event.getSource() == checking){
+				int i = 0;
+				for(i = 0; i < 7; i++){
+					if(i == 5 || i == 6)
+						textInputs[i].setEnabled(false);
+					else
+						textInputs[i].setEnabled(true);
+				}
 			}
 		}
 	}
