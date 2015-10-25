@@ -56,15 +56,13 @@ public class BankGUI extends JFrame {
 		gridTextPanel = new JPanel();
 		boxPanel = new JPanel();
 		
-<<<<<<< HEAD
 		//formats
 		currencyFormat.setMaximumFractionDigits(2);
 		percentFormat.setMaximumFractionDigits(3);
 		try {
 			characterFormat = new MaskFormatter("??????????????????????????????");
-		} catch (ParseException e) {
-			//do nothing
-=======
+		} catch (ParseException e) {}
+		
 		menuBar = new JMenuBar();
 		
 		//fileMenu
@@ -86,7 +84,6 @@ public class BankGUI extends JFrame {
 			}
 			fileItems[i] = new JMenuItem();
 			fileItems[i].addActionListener(menuListener);
->>>>>>> 96d72202c7bb79ecf62268cd93be5a753f37af56
 		}
 		
 		
@@ -121,7 +118,7 @@ public class BankGUI extends JFrame {
 		mainPanel.add(gridLabelPanel, BorderLayout.WEST);
 		mainPanel.add(gridTextPanel, BorderLayout.CENTER);
 		mainPanel.add(boxPanel, BorderLayout.EAST);
-		this.add(mainPanel);
+		add(mainPanel);
 	}
 
 	private void setup() {
@@ -322,7 +319,7 @@ public class BankGUI extends JFrame {
 			}
 			if (event.getSource() == modifyButton[2])
 			{
-				update(model.update());
+				//update(model.update());
 			}
 			if (event.getSource() == modifyButton[3])
 			{
