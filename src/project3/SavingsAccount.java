@@ -4,6 +4,7 @@ import java.util.GregorianCalendar;
 
 public class SavingsAccount extends Account{
 	
+	//instance variables
 	public static final long serialVersionUID = 1L;
 	
 	private double minimumBalance;
@@ -38,7 +39,7 @@ public class SavingsAccount extends Account{
 	
 	public String toString()
 	{
-		String output = "Account Number: " + getNumber() + "     AccountOwner: " + getOwner() + "     Date Opened: " + getDateOpened() + "     Account Balance: " + getBalance() + "     Interest Rate: " + getInterestRate() + "     MinimumBalance: " + getMinimumBalance();
+		String output = "Account Number: " + getAccountNumber() + "     AccountOwner: " + getOwner() + "     Date Opened: " + getDateOpened() + "     Account Balance: " + getBalance() + "     Interest Rate: " + getInterestRate() + "     MinimumBalance: " + getMinimumBalance();
 		return output;
 	}
 

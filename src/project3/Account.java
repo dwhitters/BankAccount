@@ -4,55 +4,71 @@ import java.io.Serializable;
 import java.util.GregorianCalendar;
 
 public abstract class Account implements Serializable {
+	
+	//instance variables
 	private static final long serialVersionUID = 1L;
-	private int number;
+	private int accountNumber;
 	private String owner;
 	private GregorianCalendar dateOpened;
 	private double balance;
 	
-	public Account(int number, String owner, GregorianCalendar dateOpened, double balance)
+	public Account(int accountNumber, String owner, GregorianCalendar dateOpened, double balance)
 	{
-		this.number = number;
+		//adds general data to account
+		this.accountNumber = accountNumber;
 		this.owner = owner;
 		this.dateOpened = dateOpened;
 		this.balance = balance;
+	}	
+	
+	public int getAccountNumber()
+	{
+		//returns account number
+		return this.accountNumber;
 	}
 	
-	
-	public int getNumber()
+	public void setNumber(int accountNumber)
 	{
-		return this.number;
-	}
-	
-	public void setNumber(int number)
-	{
-		this.number = number;
+		//sets account number
+		this.accountNumber = accountNumber;
 	}
 	
 	public String getOwner()
 	{
+		//returns owner
 		return this.owner;
 	}
 	
 	public void setOwner(String owner)
 	{
+		//sets owner
 		this.owner = owner;
 	}
 	
 	public void setBalance(double balance)
 	{
+		//sets balance
 		this.balance = balance;
 	}
 	
 	public double getBalance()
 	{
+		//returns balance
 		return this.balance;
 	}
 	
 	public GregorianCalendar getDateOpened()
 	{
+		//returns date opened
 		return dateOpened;
 	}
+	
+	public void setDateOpened(GregorianCalendar dateOpened)
+	{
+		//sets date opened
+		this.dateOpened = dateOpened;
+	}
 
+	//returns all account data in String format
 	public abstract String toString();
 }
