@@ -12,6 +12,7 @@ public class BankApplication {
 		frame.setSize(1000, 500);
 		frame.setResizable(false);
 		frame.setVisible(true);
+		frame.setJMenuBar(frame.menuBar);
 	}
 
 }
