@@ -1,5 +1,6 @@
 package project3;
 
+import java.io.*;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.GregorianCalendar;
@@ -8,7 +9,7 @@ import javax.swing.table.AbstractTableModel;
 public class BankModel extends AbstractTableModel {
 
 	//storage for accounts
-	private ArrayList<Account> accounts = new ArrayList<Account>();
+	public static ArrayList<Account> accounts = new ArrayList<Account>();
 	
 	//format variables
 	private SimpleDateFormat date = new SimpleDateFormat("dd/mm/yyyy");
@@ -159,5 +160,26 @@ public class BankModel extends AbstractTableModel {
 
 		//default return
 		return " ";
+	}
+	
+	public void loadBinary(String filename, AbstractTableModel bankModel){
+		try {
+			//Sets accounts equal to the ArrayList read from the 
+			// file
+			accounts = Account.loadDatabase(filename);
+			//update table
+			this.fireTableDataChanged();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public void saveBinary(String filename){
+		try {
+			//Saves the arraylist of accounts to the passed filename 
+			Account.saveDatabase(filename);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 }

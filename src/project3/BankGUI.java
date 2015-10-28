@@ -5,6 +5,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.io.File;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.GregorianCalendar;
@@ -80,6 +81,7 @@ public class BankGUI extends JFrame {
 		fileItems = new JMenuItem[7];
 		sortItems = new JMenuItem[3];
 
+		menuListener = new MenuListener();
 		// instantiate all menu items
 		for (int i = 0; i < 7; i++) {
 			if (i < 3) {
@@ -293,9 +295,39 @@ public class BankGUI extends JFrame {
 
 			if (event.getSource() == fileItems[0]) {
 				// Binary Load
+				String filename = (String)JOptionPane.showInputDialog(
+						new JFrame(),
+	                    "Please enter filename to load:",
+	                    "File Name Input",
+	                    JOptionPane.PLAIN_MESSAGE,
+	                    null,
+	                    null,
+	                    null);
+				File f = new File(filename);
+				
+				if(f.exists() && !f.isDirectory()) { 
+					bankModel.loadBinary(filename, bankModel);
+				}
+				else
+					JOptionPane.showMessageDialog(new JFrame(),
+						    "ERROR: FILE DOES NOT EXIST");
 			}
 			if (event.getSource() == fileItems[1]) {
 				// Binary Save
+				String filename = (String)JOptionPane.showInputDialog(
+						new JFrame(),
+	                    "Please enter filename to load:",
+	                    "File Name Input",
+	                    JOptionPane.PLAIN_MESSAGE,
+	                    null,
+	                    null,
+	                    null);
+				if(filename.contains(".")){
+					bankModel.saveBinary(filename);
+				}
+				else
+					JOptionPane.showMessageDialog(new JFrame(),
+						    "ERROR: INCORRECT FILE NAME");
 			}
 			if (event.getSource() == fileItems[2]) {
 				// Text Load
@@ -484,6 +516,9 @@ public class BankGUI extends JFrame {
 			if (event.getSource() == modifyButton[3]) {
 				// clear all text fields
 				clear();
+				if(bankModel.getRowCount() > 0)
+					bankModel.fireTableRowsUpdated(0, bankModel.getRowCount() - 1);
+				bankModel.accounts.clear();
 			}
 			if (event.getSource() == savings) {
 				// adjust GUI for savings account

@@ -1,7 +1,7 @@
 package project3;
 
-import java.io.Serializable;
-import java.util.GregorianCalendar;
+import java.io.*;
+import java.util.*;
 
 public abstract class Account implements Serializable {
 	
@@ -12,7 +12,8 @@ public abstract class Account implements Serializable {
 	private GregorianCalendar dateOpened;
 	private double balance;
 	
-	public Account(int accountNumber, String owner, GregorianCalendar dateOpened, double balance)
+	public Account(int accountNumber, String owner, 
+					GregorianCalendar dateOpened, double balance)
 	{
 		//adds general data to account
 		this.accountNumber = accountNumber;
@@ -71,4 +72,51 @@ public abstract class Account implements Serializable {
 
 	//returns all account data in String format
 	public abstract String toString();
+	
+	public static ArrayList<Account> loadDatabase (String filename) 
+			throws IOException{
+		ArrayList<Account> accounts = null;
+		FileInputStream fis = null;
+		ObjectInputStream ois = null;
+		
+		try{
+			// Read from disk using FileInputStream
+			fis = new FileInputStream(filename);
+			// Read object using ObjectInputStream
+			ois = new ObjectInputStream (fis);
+			// Read an object
+			Object obj = ois.readObject();
+			if (obj instanceof ArrayList)
+			{
+				// Cast object to accounts as an ArrayList containing 
+				// Account objects
+				accounts = (ArrayList<Account>) obj;
+			}
+		}
+		catch(Exception e){}
+		finally{
+			//Close both input streams
+			fis.close();
+			ois.close();
+		}
+
+		return accounts;
+	}
+	public static void saveDatabase (String filename) 
+			throws IOException{
+		FileOutputStream fos = null;
+		ObjectOutputStream os = null;
+		
+		try{
+			fos = new FileOutputStream(filename);
+			os = new ObjectOutputStream(fos);
+			os.writeObject(BankModel.accounts);		
+		}
+		catch(Exception e){}
+		finally{
+			//Close both output streams
+			fos.close();
+			os.close();
+		}
+	}
 }
