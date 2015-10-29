@@ -29,7 +29,7 @@ public class BankModel extends AbstractTableModel {
 		//set column names
 		columnNames = new String []{ "Account Number", "Account Owner",
 					"Date Opened", "Account Balance", "Monthly Fee",
-					"Interest Rate", "Minimum Balance" };
+					"Interest Rate", "Minimum Balance"};
 	}
 	
 	public void update(int number, String owner,
@@ -180,6 +180,23 @@ public class BankModel extends AbstractTableModel {
 			Account.saveDatabase(filename);
 		} catch (IOException e) {
 			e.printStackTrace();
+		}
+	}
+	
+	public void loadText(String filename, AbstractTableModel bankModel){
+		try {
+			accounts = Account.loadTextDatabase(filename);
+			this.fireTableDataChanged();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public void saveText(String filename, AbstractTableModel bankModel){
+		try{
+			Account.saveTextDatabase(filename);
+		}catch(Exception e){
+			int i = 0;
 		}
 	}
 }

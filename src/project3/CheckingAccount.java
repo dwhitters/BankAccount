@@ -32,7 +32,11 @@ public class CheckingAccount extends Account{
 	public String toString()
 	{
 		//create String with checking account information
-		String accountInformation = "Account Number: " + getAccountNumber() + "     AccountOwner: " + getOwner() + "     Date Opened: " + getDateOpened() + "     Account Balance: " + getBalance() + "     Monthly Fee: " + getMonthlyFee();
+		String accountInformation = "Account Type:\tC\tAccount Number:\t" + 
+				getAccountNumber() + "\tAccountOwner:\t" + getOwner() + 
+				"\tDate Opened:\t" + getStrDateOpened() + 
+				"\tAccount Balance:\t" + getBalance() + 
+				"\tMonthly Fee:\t" + getMonthlyFee();
 		
 		//return string
 		return accountInformation;

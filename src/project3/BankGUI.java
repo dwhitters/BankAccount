@@ -5,6 +5,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.awt.event.WindowEvent;
 import java.io.File;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
@@ -49,7 +50,7 @@ public class BankGUI extends JFrame {
 
 	// format variables
 	private SimpleDateFormat dateFormat = new SimpleDateFormat(
-			"dd/MM/yyyy");
+			"MM/dd/yyyy");
 
 	public BankGUI() {
 		// title
@@ -295,14 +296,7 @@ public class BankGUI extends JFrame {
 
 			if (event.getSource() == fileItems[0]) {
 				// Binary Load
-				String filename = (String)JOptionPane.showInputDialog(
-						new JFrame(),
-	                    "Please enter filename to load:",
-	                    "File Name Input",
-	                    JOptionPane.PLAIN_MESSAGE,
-	                    null,
-	                    null,
-	                    null);
+				String filename = getFileName("Please enter filename to load:");
 				File f = new File(filename);
 				
 				if(f.exists() && !f.isDirectory()) { 
@@ -314,26 +308,26 @@ public class BankGUI extends JFrame {
 			}
 			if (event.getSource() == fileItems[1]) {
 				// Binary Save
-				String filename = (String)JOptionPane.showInputDialog(
-						new JFrame(),
-	                    "Please enter filename to load:",
-	                    "File Name Input",
-	                    JOptionPane.PLAIN_MESSAGE,
-	                    null,
-	                    null,
-	                    null);
-				if(filename.contains(".")){
-					bankModel.saveBinary(filename);
-				}
-				else
-					JOptionPane.showMessageDialog(new JFrame(),
-						    "ERROR: INCORRECT FILE NAME");
+				String filename = getFileName("Please enter filename to save to:");
+				bankModel.saveBinary(filename);
+				//No need for error checking
 			}
 			if (event.getSource() == fileItems[2]) {
 				// Text Load
+				String filename = getFileName("Please enter filename to load");
+				File f = new File(filename);
+				
+				if(f.exists() && !f.isDirectory()) { 
+					bankModel.loadText(filename, bankModel);
+				}
+				else
+					JOptionPane.showMessageDialog(new JFrame(),
+						    "ERROR: FILE DOES NOT EXIST");
 			}
 			if (event.getSource() == fileItems[3]) {
 				// text save
+				String filename = getFileName("Please enter filename to save to:");
+				bankModel.saveText(filename, bankModel);
 			}
 			if (event.getSource() == fileItems[4]) {
 				// XML load
@@ -343,6 +337,7 @@ public class BankGUI extends JFrame {
 			}
 			if (event.getSource() == fileItems[6]) {
 				// quit
+				System.exit(1);
 			}
 			if (event.getSource() == sortItems[0]) {
 				// sort by account number
@@ -354,13 +349,25 @@ public class BankGUI extends JFrame {
 				// sort by date
 			}
 		}
+		private String getFileName(String message){
+			String filename = (String)JOptionPane.showInputDialog(
+					new JFrame(),
+                    message,
+                    "File Name Input",
+                    JOptionPane.PLAIN_MESSAGE,
+                    null,
+                    null,
+                    null);
+			return filename;
+		}
 	}
 
 	private class TableListener implements MouseListener {
 
 		@Override
 		public void mouseClicked(MouseEvent arg0) {
-			updateFields(bankModel.getAccountInRow(table.getSelectedRow()));
+			if(table.getSelectedRow() >= 0)
+				updateFields(bankModel.getAccountInRow(table.getSelectedRow()));
 		}
 
 		@Override
@@ -377,8 +384,8 @@ public class BankGUI extends JFrame {
 
 		@Override
 		public void mousePressed(MouseEvent arg0) {
-
-			updateFields(bankModel.getAccountInRow(table.getSelectedRow()));
+			if(table.getSelectedRow() >= 0)
+				updateFields(bankModel.getAccountInRow(table.getSelectedRow()));
 		}
 
 		@Override
@@ -386,7 +393,6 @@ public class BankGUI extends JFrame {
 
 			// do nothing
 		}
-
 	}
 
 	private class ButtonListener implements ActionListener {
@@ -516,9 +522,6 @@ public class BankGUI extends JFrame {
 			if (event.getSource() == modifyButton[3]) {
 				// clear all text fields
 				clear();
-				if(bankModel.getRowCount() > 0)
-					bankModel.fireTableRowsUpdated(0, bankModel.getRowCount() - 1);
-				bankModel.accounts.clear();
 			}
 			if (event.getSource() == savings) {
 				// adjust GUI for savings account
