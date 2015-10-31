@@ -5,23 +5,34 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.GregorianCalendar;
-import javax.swing.table.AbstractTableModel;
+
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
+import org.w3c.dom.Attr;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import java.io.File;
 
 public class BankModel extends AbstractTableModel {
 
 	// storage for accounts
 	public static ArrayList<Account> accounts = new ArrayList<Account>();
-	
-	//format variables
+
+	// format variables
 	private SimpleDateFormat date = new SimpleDateFormat("MM/dd/yyyy");
-	
-	//table information
-	private String columnNames [];
+
+	// table information
+	private String columnNames[];
 
 	public BankModel() {
 		// create and add hard-coded accounts
 		SavingsAccount savingsTest1 = new SavingsAccount(125, "Bob",
-				new GregorianCalendar(2015, 10 - 1, 25), 100, .01, 5.00);
+				new GregorianCalendar(2015, 10 - 1, 25), 100, .01,
+				5.00);
 		SavingsAccount savingsTest2 = new SavingsAccount(123, "Allen",
 				new GregorianCalendar(2016, 9 - 1, 30), 100, .01, 5.00);
 		accounts.add(savingsTest1);
@@ -173,16 +184,18 @@ public class BankModel extends AbstractTableModel {
 		// default return
 		return " ";
 	}
-	
-	public void sortByNum(){
-		if(accounts.size() > 1){
+
+	public void sortByNum() {
+
+		if (accounts.size() > 1) {
 			Collections.sort(accounts, new AccountNumberComparator());
 			this.fireTableRowsUpdated(0, accounts.size() - 1);
 		}
 	}
-	
-	public void sortByName(){
-		if(accounts.size() > 1){
+
+	public void sortByName() {
+
+		if (accounts.size() > 1) {
 			Collections.sort(accounts, new AccountOwnerComparator());
 			this.fireTableRowsUpdated(0, accounts.size() - 1);
 		}
@@ -190,34 +203,34 @@ public class BankModel extends AbstractTableModel {
 
 	public void loadBinary(String filename,
 			AbstractTableModel bankModel) {
+
 		try {
 			// Sets accounts equal to the ArrayList read from the
 			// file
 			ArrayList<Account> accounts = null;
 			FileInputStream fis = null;
 			ObjectInputStream ois = null;
-			
-			try{
+
+			try {
 				// Read from disk using FileInputStream
 				fis = new FileInputStream(filename);
 				// Read object using ObjectInputStream
-				ois = new ObjectInputStream (fis);
+				ois = new ObjectInputStream(fis);
 				// Read an object
 				Object obj = ois.readObject();
-				if (obj instanceof ArrayList)
-				{
-					// Cast object to accounts as an ArrayList containing 
+				if (obj instanceof ArrayList) {
+					// Cast object to accounts as an ArrayList
+					// containing
 					// Account objects
 					accounts = (ArrayList<Account>) obj;
 				}
-			}
-			catch(Exception e){}
-			finally{
-				//Close both input streams
+			} catch (Exception e) {
+			} finally {
+				// Close both input streams
 				fis.close();
 				ois.close();
 			}
-			//update table
+			// update table
 			this.fireTableDataChanged();
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -227,18 +240,17 @@ public class BankModel extends AbstractTableModel {
 	public void saveBinary(String filename) {
 
 		try {
-			//Saves the arraylist of accounts to the passed filename 
+			// Saves the arraylist of accounts to the passed filename
 			FileOutputStream fos = null;
 			ObjectOutputStream os = null;
-			
-			try{
+
+			try {
 				fos = new FileOutputStream(filename);
 				os = new ObjectOutputStream(fos);
-				os.writeObject(BankModel.accounts);		
-			}
-			catch(Exception e){}
-			finally{
-				//Close both output streams
+				os.writeObject(BankModel.accounts);
+			} catch (Exception e) {
+			} finally {
+				// Close both output streams
 				fos.close();
 				os.close();
 			}
@@ -247,8 +259,52 @@ public class BankModel extends AbstractTableModel {
 		}
 	}
 
+	public void saveXML(String filename)
+	{
+		try{
+			DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
+			DocumentBuilder documentBuilder = documentBuilderFactory.newDocumentBuilder();
+			Document document = documentBuilder.newDocument();
+			
+			//root element
+			Element rootElement = document.createElement("Account");
+			document.appendChild(rootElement);
+			
+			for (int i = 0; i < accounts.size(); i++)
+			{
+				if (accounts.get(i) instanceof SavingsAccount)
+				{
+					Element number = document.createElement("Number");
+					Attr accountNumber = document.createAttribute(Integer.toString(accounts.get(i).getAccountNumber()));
+					
+					Element owner = document.createElement("Owner");
+					Element balance = document.createElement("Balance");
+				}
+			}
+			
+			//checking account element
+			Element checkingAccount = document.createElement("checking");
+			document.appendChild(rootElement);
+			
+			//set attribute to savings
+			Attr attr = document.createAttribute("interest");
+			attr.setValue("%.05");
+			savingsAccount.setAttributeNode(attr);
+			
+			//set attribute to checking
+			attr = document.createAttribute("monthly fee");
+			attr.setValue("15.00");
+			savingsAccount.setAttributeNode(attr);
+		}
+	}
+
+	public void loadXML(String filename) {
+
+	}
+
 	public void loadText(String filename,
 			AbstractTableModel bankModel) {
+
 		try {
 			int fileLength = 0;
 			String lineData = "";
@@ -260,64 +316,65 @@ public class BankModel extends AbstractTableModel {
 			FileReader fr = null;
 			BufferedReader br = null;
 			ArrayList<Account> accounts = new ArrayList<Account>();
-			try{
+			try {
 				fr = new FileReader(filename);
 				br = new BufferedReader(fr);
-				
-				while((lineData = br.readLine()) != null){
-					//Empty ArrayList every loop, otherwise it continues to 
+
+				while ((lineData = br.readLine()) != null) {
+					// Empty ArrayList every loop, otherwise it
+					// continues to
 					// grow
-					
+
 					strSplit = lineData.split("\t");
-					if(strSplit[1].equals("S")){
+					if (strSplit[1].equals("S")) {
 						savingsData.clear();
-						for(int i = 0; i < 14; i++)
-							if(i%2 == 1)
+						for (int i = 0; i < 14; i++)
+							if (i % 2 == 1)
 								savingsData.add(strSplit[i]);
-						//Split date into 3 separate strings then convert
+						// Split date into 3 separate strings then
+						// convert
 						// to integers into another array
 						date = savingsData.get(3).split("/");
-						for(int i = 0; i < 3; i++)
+						for (int i = 0; i < 3; i++)
 							iDate[i] = Integer.parseInt(date[i]);
-						
+
 						SavingsAccount act = new SavingsAccount(
-								Integer.parseInt(savingsData.get(1)), 
-								savingsData.get(2), 
-								new GregorianCalendar(iDate[2], iDate[0], 
-										iDate[1]), 
-								Double.parseDouble(savingsData.get(4)), 
-								Double.parseDouble(savingsData.get(6)), 
+								Integer.parseInt(savingsData.get(1)),
+								savingsData.get(2),
+								new GregorianCalendar(iDate[2],
+										iDate[0], iDate[1]),
+								Double.parseDouble(savingsData.get(4)),
+								Double.parseDouble(savingsData.get(6)),
 								Double.parseDouble(savingsData.get(5)));
-						
+
 						accounts.add(act);
-					}
-					else{
+					} else {
 						checkingData.clear();
-						for(int i = 0; i < 12; i++)
-							if(i%2 == 1)
+						for (int i = 0; i < 12; i++)
+							if (i % 2 == 1)
 								checkingData.add(strSplit[i]);
-						//Split date into 3 separate strings then convert
+						// Split date into 3 separate strings then
+						// convert
 						// to integers into another array
 						date = checkingData.get(3).split("/");
-						for(int i = 0; i < 3; i++)
+						for (int i = 0; i < 3; i++)
 							iDate[i] = Integer.parseInt(date[i]);
-						
+
 						CheckingAccount act = new CheckingAccount(
-								Integer.parseInt(checkingData.get(1)), 
-								checkingData.get(2), 
-								new GregorianCalendar(iDate[2], iDate[0], 
-										iDate[1]), 
-								Double.parseDouble(checkingData.get(4)), 
-								Double.parseDouble(checkingData.get(5)));
-						
+								Integer.parseInt(checkingData.get(1)),
+								checkingData.get(2),
+								new GregorianCalendar(iDate[2],
+										iDate[0], iDate[1]),
+								Double.parseDouble(checkingData.get(4)),
+								Double.parseDouble(
+										checkingData.get(5)));
+
 						accounts.add(act);
 					}
-				}		
-			}
-			catch(Exception e){
+				}
+			} catch (Exception e) {
 				System.out.println(e.getMessage());
-			}
-			finally{
+			} finally {
 				fr.close();
 				br.close();
 			}
@@ -326,38 +383,40 @@ public class BankModel extends AbstractTableModel {
 			e.printStackTrace();
 		}
 	}
-	
-	public void saveText(String filename, AbstractTableModel bankModel){
-		try{
+
+	public void saveText(String filename,
+			AbstractTableModel bankModel) {
+
+		try {
 			FileWriter write = null;
 			PrintWriter pw = null;
-			try{
+			try {
 				write = new FileWriter(filename);
 				pw = new PrintWriter(write);
-				
-				for(int i = 0; i < BankModel.accounts.size(); i++){
-					if(BankModel.accounts.get(i) instanceof SavingsAccount){
-						SavingsAccount act = 
-								(SavingsAccount)BankModel.accounts.get(i);
+
+				for (int i = 0; i < BankModel.accounts.size(); i++) {
+					if (BankModel.accounts
+							.get(i) instanceof SavingsAccount) {
+						SavingsAccount act = (SavingsAccount) BankModel.accounts
+								.get(i);
 						pw.println(act.toString());
-					}
-					else{
-						CheckingAccount act = 
-								(CheckingAccount)BankModel.accounts.get(i);
+					} else {
+						CheckingAccount act = (CheckingAccount) BankModel.accounts
+								.get(i);
 						pw.println(act.toString());
 					}
 				}
-			}
-			catch(Exception e){}
-			finally{
+			} catch (Exception e) {
+			} finally {
 				write.close();
 				pw.close();
 			}
-		}catch(Exception e){}
+		} catch (Exception e) {
+		}
 	}
-	
-	public void sortByDateOpened()
-	{
+
+	public void sortByDateOpened() {
+
 		Collections.sort(accounts, new DateComparator());
 		this.fireTableDataChanged();
 	}
