@@ -28,6 +28,12 @@ public abstract class Account implements Serializable {
 		return this.accountNumber;
 	}
 	
+	public String getAccountOwner()
+	{
+		//returns account number
+		return owner;
+	}
+	
 	public void setNumber(int accountNumber)
 	{
 		//sets account number
