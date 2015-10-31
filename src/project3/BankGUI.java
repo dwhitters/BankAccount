@@ -420,7 +420,7 @@ public class BankGUI extends JFrame {
 					int year = Integer.parseInt(
 							dateOpenedString.substring(6, 10));
 					GregorianCalendar dateOpened = new GregorianCalendar(
-							year, month, day);
+							year, month - 1, day);
 					double accountBalance = Double
 							.parseDouble(textInputs[3].getText());
 					try {
@@ -485,7 +485,7 @@ public class BankGUI extends JFrame {
 					int year = Integer.parseInt(
 							dateOpenedString.substring(6, 10));
 					GregorianCalendar dateOpened = new GregorianCalendar(
-							year, month, day);
+							year, month - 1, day);
 					double accountBalance = Double
 							.parseDouble(textInputs[3].getText());
 					try {

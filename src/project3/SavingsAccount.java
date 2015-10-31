@@ -5,8 +5,7 @@ import java.util.GregorianCalendar;
 public class SavingsAccount extends Account{
 	
 	//instance variables
-	public static final long serialVersionUID = 1L;
-	
+	private static final long serialVersionUID = 1L;
 	private double minimumBalance;
 	private double interestRate;
 	

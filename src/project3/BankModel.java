@@ -8,7 +8,7 @@ import javax.swing.table.AbstractTableModel;
 
 public class BankModel extends AbstractTableModel {
 
-	//storage for accounts
+	// storage for accounts
 	public static ArrayList<Account> accounts = new ArrayList<Account>();
 	
 	//format variables
@@ -18,43 +18,47 @@ public class BankModel extends AbstractTableModel {
 	private String columnNames [];
 
 	public BankModel() {
-		//create and add hard-coded accounts
+		// create and add hard-coded accounts
 		SavingsAccount savingsTest1 = new SavingsAccount(123, "Bob",
-				new GregorianCalendar(), 100, .01, 5.00);
+				new GregorianCalendar(2015, 10 - 1, 9), 100, .01, 5.00);
 		SavingsAccount savingsTest2 = new SavingsAccount(123, "Allen",
-				new GregorianCalendar(), 100, .01, 5.00);
+				new GregorianCalendar(2015, 10 - 1, 31), 100, .01, 5.00);
 		accounts.add(savingsTest1);
 		accounts.add(savingsTest2);
-		
-		//set column names
-		columnNames = new String []{ "Account Number", "Account Owner",
-					"Date Opened", "Account Balance", "Monthly Fee",
-					"Interest Rate", "Minimum Balance"};
+
+		// set column names
+		columnNames = new String[] { "Account Number", "Account Owner",
+				"Date Opened", "Account Balance", "Monthly Fee",
+				"Interest Rate", "Minimum Balance" };
 	}
-	
+
 	public void update(int number, String owner,
 			GregorianCalendar dateOpened, double balance,
 			double monthlyFee, double interestRate,
-			double minimumBalance, boolean isSavings, int selectedRow){
-		//update data depending on account type
+			double minimumBalance, boolean isSavings, int selectedRow) {
+
+		// update data depending on account type
 		if (isSavings == true) {
-			//update data
+			// update data
 			accounts.get(selectedRow).setNumber(number);
 			accounts.get(selectedRow).setOwner(owner);
 			accounts.get(selectedRow).setDateOpened(dateOpened);
 			accounts.get(selectedRow).setBalance(balance);
-			((SavingsAccount)accounts.get(selectedRow)).setInterestRate(interestRate);
-			((SavingsAccount)accounts.get(selectedRow)).setMinimumBalance(minimumBalance);
+			((SavingsAccount) accounts.get(selectedRow))
+					.setInterestRate(interestRate);
+			((SavingsAccount) accounts.get(selectedRow))
+					.setMinimumBalance(minimumBalance);
 		} else {
-			//update data
+			// update data
 			accounts.get(selectedRow).setNumber(number);
 			accounts.get(selectedRow).setOwner(owner);
 			accounts.get(selectedRow).setDateOpened(dateOpened);
 			accounts.get(selectedRow).setBalance(balance);
-			((CheckingAccount)accounts.get(selectedRow)).setMonthlyFee(monthlyFee);
+			((CheckingAccount) accounts.get(selectedRow))
+					.setMonthlyFee(monthlyFee);
 		}
-		
-		//tell table to update
+
+		// tell table to update
 		this.fireTableDataChanged();
 	}
 
@@ -62,63 +66,69 @@ public class BankModel extends AbstractTableModel {
 			GregorianCalendar dateOpened, double balance,
 			double monthlyFee, double interestRate,
 			double minimumBalance, boolean isSavings) {
-		//add new data to account type
+
+		// add new data to account type
 		if (isSavings == true) {
-			//create savings account
+			// create savings account
 			SavingsAccount addedSavingsAccount = new SavingsAccount(
 					number, owner, dateOpened, balance, minimumBalance,
 					interestRate);
-			
-			//add savings account to array
+
+			// add savings account to array
 			accounts.add(addedSavingsAccount);
 		} else {
-			//create checking account
+			// create checking account
 			CheckingAccount addedCheckingAccount = new CheckingAccount(
 					number, owner, dateOpened, balance, monthlyFee);
-			
-			//add checking account to array
+
+			// add checking account to array
 			accounts.add(addedCheckingAccount);
 		}
-		
-		//tell table to update
+
+		// tell table to update
 		this.fireTableDataChanged();
 	}
 
 	public void delete(int selectedRow) {
-		//delete defined row
+
+		// delete defined row
 		accounts.remove(selectedRow);
-		
-		//tell table to update
+
+		// tell table to update
 		this.fireTableDataChanged();
 	}
 
 	public Account getAccountInRow(int row) {
-		//return account in defined row
+
+		// return account in defined row
 		return accounts.get(row);
 	}
 
 	@Override
 	public int getColumnCount() {
-		//return number of columns
+
+		// return number of columns
 		return columnNames.length;
 	}
 
 	@Override
 	public int getRowCount() {
-		//return number of accounts
+
+		// return number of accounts
 		return accounts.size();
 	}
 
 	@Override
 	public String getColumnName(int column) {
-		//return column name at defined column
+
+		// return column name at defined column
 		return columnNames[column];
 	}
 
 	@Override
 	public Object getValueAt(int rowIndex, int columnIndex) {
 
-		//find value to return
+		// find value to return
 		if (accounts.get(rowIndex) instanceof SavingsAccount) {
 			switch (columnIndex) {
 			case 0:
@@ -126,7 +136,8 @@ public class BankModel extends AbstractTableModel {
 			case 1:
 				return accounts.get(rowIndex).getOwner();
 			case 2:
-				return date.format(accounts.get(rowIndex).getDateOpened().getTime());
+				return date.format(accounts.get(rowIndex)
+						.getDateOpened().getTime());
 			case 3:
 				return accounts.get(rowIndex).getBalance();
 			case 4:
@@ -145,7 +156,8 @@ public class BankModel extends AbstractTableModel {
 			case 1:
 				return accounts.get(rowIndex).getOwner();
 			case 2:
-				return date.format(accounts.get(rowIndex).getDateOpened().getTime());
+				return date.format(accounts.get(rowIndex)
+						.getDateOpened().getTime());
 			case 3:
 				return accounts.get(rowIndex).getBalance();
 			case 4:
@@ -157,14 +169,14 @@ public class BankModel extends AbstractTableModel {
 				return "";
 			}
 		}
-
-		//default return
+		// default return
 		return " ";
 	}
-	
-	public void loadBinary(String filename, AbstractTableModel bankModel){
+
+	public void loadBinary(String filename,
+			AbstractTableModel bankModel) {
 		try {
-			//Sets accounts equal to the ArrayList read from the 
+			// Sets accounts equal to the ArrayList read from the
 			// file
 			ArrayList<Account> accounts = null;
 			FileInputStream fis = null;
@@ -196,8 +208,9 @@ public class BankModel extends AbstractTableModel {
 			e.printStackTrace();
 		}
 	}
-	
-	public void saveBinary(String filename){
+
+	public void saveBinary(String filename) {
+
 		try {
 			//Saves the arraylist of accounts to the passed filename 
 			FileOutputStream fos = null;
@@ -218,8 +231,9 @@ public class BankModel extends AbstractTableModel {
 			e.printStackTrace();
 		}
 	}
-	
-	public void loadText(String filename, AbstractTableModel bankModel){
+
+	public void loadText(String filename,
+			AbstractTableModel bankModel) {
 		try {
 			int fileLength = 0;
 			String lineData = "";
@@ -324,8 +338,6 @@ public class BankModel extends AbstractTableModel {
 				write.close();
 				pw.close();
 			}
-		}catch(Exception e){
-			int i = 0;
-		}
+		}catch(Exception e){}
 	}
 }
