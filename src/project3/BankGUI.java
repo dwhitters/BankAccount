@@ -341,22 +341,18 @@ public class BankGUI extends JFrame {
 			}
 			if (event.getSource() == sortItems[0]) {
 				// sort by account number
-<<<<<<< HEAD
 				
-=======
 				bankModel.sortByNum();
->>>>>>> 2f7f74e131d000b27a4e2f70a39643c60a6e2f77
 			}
 			if (event.getSource() == sortItems[1]) {
 				// sort by account owner
 				bankModel.sortByName();
 			}
 			if (event.getSource() == sortItems[2]) {
-<<<<<<< HEAD
+
 				bankModel.sortByDateOpened();
-=======
+
 				// sort by date
->>>>>>> 2f7f74e131d000b27a4e2f70a39643c60a6e2f77
 			}
 		}
 		private String getFileName(String message){

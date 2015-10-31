@@ -20,7 +20,7 @@ public class BankModel extends AbstractTableModel {
 
 	public BankModel() {
 		// create and add hard-coded accounts
-		SavingsAccount savingsTest1 = new SavingsAccount(123, "Bob",
+		SavingsAccount savingsTest1 = new SavingsAccount(125, "Bob",
 				new GregorianCalendar(2015, 10 - 1, 25), 100, .01, 5.00);
 		SavingsAccount savingsTest2 = new SavingsAccount(123, "Allen",
 				new GregorianCalendar(2016, 9 - 1, 30), 100, .01, 5.00);
