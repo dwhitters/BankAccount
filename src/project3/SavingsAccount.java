@@ -38,7 +38,11 @@ public class SavingsAccount extends Account{
 	
 	public String toString()
 	{
-		String output = "Account Number: " + getAccountNumber() + "     AccountOwner: " + getOwner() + "     Date Opened: " + getDateOpened() + "     Account Balance: " + getBalance() + "     Interest Rate: " + getInterestRate() + "     MinimumBalance: " + getMinimumBalance();
+		String output = "Account Type:\tS\tAccount Number:\t" + getAccountNumber() + 
+				"\tAccountOwner:\t" + getOwner() + "\tDate Opened:\t" + 
+				getStrDateOpened() + "\tAccount Balance:\t" + getBalance() +
+				"\tInterest Rate:\t" + getInterestRate() +
+				"\tMinimumBalance:\t" + getMinimumBalance();
 		return output;
 	}
 
