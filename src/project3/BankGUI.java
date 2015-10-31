@@ -341,12 +341,13 @@ public class BankGUI extends JFrame {
 			}
 			if (event.getSource() == sortItems[0]) {
 				// sort by account number
+				
 			}
-			if (event.getSource() == sortItems[0]) {
+			if (event.getSource() == sortItems[1]) {
 				// sort by account owner
 			}
-			if (event.getSource() == sortItems[0]) {
-				// sort by date
+			if (event.getSource() == sortItems[2]) {
+				bankModel.sortByDateOpened();
 			}
 		}
 		private String getFileName(String message){

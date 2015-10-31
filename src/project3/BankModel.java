@@ -3,6 +3,7 @@ package project3;
 import java.io.*;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.GregorianCalendar;
 import javax.swing.table.AbstractTableModel;
 
@@ -20,9 +21,9 @@ public class BankModel extends AbstractTableModel {
 	public BankModel() {
 		// create and add hard-coded accounts
 		SavingsAccount savingsTest1 = new SavingsAccount(123, "Bob",
-				new GregorianCalendar(2015, 10 - 1, 9), 100, .01, 5.00);
+				new GregorianCalendar(2015, 10 - 1, 25), 100, .01, 5.00);
 		SavingsAccount savingsTest2 = new SavingsAccount(123, "Allen",
-				new GregorianCalendar(2015, 10 - 1, 31), 100, .01, 5.00);
+				new GregorianCalendar(2016, 9 - 1, 30), 100, .01, 5.00);
 		accounts.add(savingsTest1);
 		accounts.add(savingsTest2);
 
@@ -339,5 +340,11 @@ public class BankModel extends AbstractTableModel {
 				pw.close();
 			}
 		}catch(Exception e){}
+	}
+	
+	public void sortByDateOpened()
+	{
+		Collections.sort(accounts, new DateComparator());
+		this.fireTableDataChanged();
 	}
 }
