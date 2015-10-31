@@ -17,6 +17,13 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import java.io.File;
 
+import javax.xml.parsers.*;
+import javax.xml.transform.*;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
+
+import org.w3c.dom.*;
+
 public class BankModel extends AbstractTableModel {
 
 	// storage for accounts
@@ -200,10 +207,20 @@ public class BankModel extends AbstractTableModel {
 			this.fireTableRowsUpdated(0, accounts.size() - 1);
 		}
 	}
+	
+	public void sortByDateOpened()
+	{
+		Collections.sort(accounts, new DateComparator());
+		this.fireTableDataChanged();
+	}
 
+<<<<<<< HEAD
 	public void loadBinary(String filename,
 			AbstractTableModel bankModel) {
 
+=======
+	public void loadBinary(String filename) {
+>>>>>>> 43741f5bea52f2e21ba6fa8b8359d545beb1a77d
 		try {
 			// Sets accounts equal to the ArrayList read from the
 			// file
@@ -259,6 +276,7 @@ public class BankModel extends AbstractTableModel {
 		}
 	}
 
+<<<<<<< HEAD
 	public void saveXML(String filename)
 	{
 		try{
@@ -305,6 +323,9 @@ public class BankModel extends AbstractTableModel {
 	public void loadText(String filename,
 			AbstractTableModel bankModel) {
 
+=======
+	public void loadText(String filename) {
+>>>>>>> 43741f5bea52f2e21ba6fa8b8359d545beb1a77d
 		try {
 			int fileLength = 0;
 			String lineData = "";
@@ -383,11 +404,17 @@ public class BankModel extends AbstractTableModel {
 			e.printStackTrace();
 		}
 	}
+<<<<<<< HEAD
 
 	public void saveText(String filename,
 			AbstractTableModel bankModel) {
 
 		try {
+=======
+	
+	public void saveText(String filename){
+		try{
+>>>>>>> 43741f5bea52f2e21ba6fa8b8359d545beb1a77d
 			FileWriter write = null;
 			PrintWriter pw = null;
 			try {
@@ -414,10 +441,191 @@ public class BankModel extends AbstractTableModel {
 		} catch (Exception e) {
 		}
 	}
+<<<<<<< HEAD
 
 	public void sortByDateOpened() {
 
 		Collections.sort(accounts, new DateComparator());
+=======
+	
+	public void loadXML(String filename){
+		ArrayList<Account> accounts = new ArrayList<Account>();
+		try {
+			File fXmlFile = new File(filename);
+			DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+			DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
+			Document doc = dBuilder.parse(fXmlFile);
+					
+			doc.getDocumentElement().normalize();
+					
+			NodeList nList = doc.getElementsByTagName("Account");
+
+			for (int i = 0; i < nList.getLength(); i++) {
+
+				Node nNode = nList.item(i);
+						
+				if (nNode.getNodeType() == Node.ELEMENT_NODE) {
+					Element eElement = (Element) nNode;
+					
+					String type = eElement.getElementsByTagName("type").item(0).getTextContent();
+					int number = Integer.parseInt(eElement.getAttribute("number"));
+					String date = eElement.getElementsByTagName("date").item(0).getTextContent();
+					Double balance = Double.parseDouble(eElement.getElementsByTagName("balance").item(0).getTextContent());
+					String owner = eElement.getElementsByTagName("owner").item(0).getTextContent();
+					Double minBalance = null;
+					Double interestRate = null;
+					Double monthlyFee = null;
+					if(type.equals("C"))
+						monthlyFee = Double.parseDouble(eElement.getElementsByTagName("monthlyFee").item(0).getTextContent());
+					else{
+						minBalance = Double.parseDouble(eElement.getElementsByTagName("minBalance").item(0).getTextContent());
+						interestRate = Double.parseDouble(eElement.getElementsByTagName("interestRate").item(0).getTextContent());
+					}
+					
+					String date1[] = new String[3];
+					date1 = date.split("/");
+					
+					int month = Integer
+							.parseInt(date1[0]);
+					int day = Integer
+							.parseInt(date1[1]);
+					int year = Integer.parseInt(
+							date1[2]);
+					GregorianCalendar dateOpened = new GregorianCalendar(
+							year, month - 1, day);
+					
+					if(type.equals("S")){
+						SavingsAccount act = null;
+						act = new SavingsAccount(number, owner, dateOpened, balance, minBalance, interestRate);
+						accounts.add(act);
+					}
+					else{
+						CheckingAccount act = null;
+						act = new CheckingAccount(number, owner, dateOpened, balance, monthlyFee);
+						accounts.add(act);
+					}
+				}
+			}
+		    } catch (Exception e) {
+			e.printStackTrace();
+		    }
+		this.accounts = accounts;
+		
+		//Update the table with the new account values
+>>>>>>> 43741f5bea52f2e21ba6fa8b8359d545beb1a77d
 		this.fireTableDataChanged();
+	}
+
+	public void saveToXML(String filename){
+		try {
+			DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
+			DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
+
+			// root elements
+			Document doc = docBuilder.newDocument();
+			Element rootElement = doc.createElement("catalog");
+			doc.appendChild(rootElement);
+			
+			for(int i = 0; i < accounts.size(); i++){
+				// account elements
+				Element account = doc.createElement("Account");
+				rootElement.appendChild(account);
+	
+				// set attribute to staff element
+				Attr num = doc.createAttribute("number");
+				num.setValue(Integer.toString(accounts.get(i).getAccountNumber()));
+				account.setAttributeNode(num);
+	
+				if(accounts.get(i) instanceof SavingsAccount){
+					SavingsAccount act = (SavingsAccount)accounts.get(i);
+					
+					// type elements
+					Element type = doc.createElement("type");
+					type.appendChild(doc.createTextNode("S"));
+					account.appendChild(type);
+		
+					// date elements
+					Element date = doc.createElement("date");
+					date.appendChild(doc.createTextNode(act.getStrDateOpened()));
+					account.appendChild(date);
+		
+					// balance elements
+					Element balance = doc.createElement("balance");
+					balance.appendChild(doc.createTextNode(Double.toString(act.getBalance())));
+					account.appendChild(balance);
+		
+					// owner elements
+					Element owner = doc.createElement("owner");
+					owner.appendChild(doc.createTextNode(act.getAccountOwner()));
+					account.appendChild(owner);
+					
+					// minimum balance elements
+					Element minBalance = doc.createElement("minBalance");
+					minBalance.appendChild(doc.createTextNode(Double.toString(act.getMinimumBalance())));
+					account.appendChild(minBalance);
+					
+					// interest rate elements
+					Element interestRate = doc.createElement("interestRate");
+					interestRate.appendChild(doc.createTextNode(Double.toString(act.getInterestRate())));
+					account.appendChild(interestRate);
+					
+					// monthly elements
+					Element monthlyFee = doc.createElement("monthlyFee");
+					monthlyFee.appendChild(doc.createTextNode(""));
+					account.appendChild(monthlyFee);
+				}
+				else{
+					CheckingAccount act = (CheckingAccount)accounts.get(i);
+					
+					// type elements
+					Element type = doc.createElement("type");
+					type.appendChild(doc.createTextNode("C"));
+					account.appendChild(type);
+		
+					// date elements
+					Element date = doc.createElement("date");
+					date.appendChild(doc.createTextNode(act.getStrDateOpened()));
+					account.appendChild(date);
+		
+					// balance elements
+					Element balance = doc.createElement("balance");
+					balance.appendChild(doc.createTextNode(Double.toString(act.getBalance())));
+					account.appendChild(balance);
+		
+					// owner elements
+					Element owner = doc.createElement("owner");
+					owner.appendChild(doc.createTextNode(act.getAccountOwner()));
+					account.appendChild(owner);
+					
+					// minimum balance elements
+					Element minBalance = doc.createElement("minBalance");
+					minBalance.appendChild(doc.createTextNode(""));
+					account.appendChild(minBalance);
+					
+					// interest rate elements
+					Element interestRate = doc.createElement("interestRate");
+					interestRate.appendChild(doc.createTextNode(""));
+					account.appendChild(interestRate);
+					
+					// monthly elements
+					Element monthlyFee = doc.createElement("monthlyFee");
+					monthlyFee.appendChild(doc.createTextNode(Double.toString(act.getMonthlyFee())));
+					account.appendChild(monthlyFee);
+				}
+			}
+
+			// write the content into xml file
+			TransformerFactory transformerFactory = TransformerFactory.newInstance();
+			Transformer transformer = transformerFactory.newTransformer();
+			DOMSource source = new DOMSource(doc);
+			StreamResult result = new StreamResult(new File(filename + ".xml"));
+
+			transformer.transform(source, result);
+
+		  } catch (ParserConfigurationException pce) {
+			pce.printStackTrace();
+		  } catch (TransformerException tfe) {
+			tfe.printStackTrace();
+		  }
 	}
 }
