@@ -2,7 +2,6 @@ package project3;
 
 import java.io.*;
 import java.util.*;
-import java.text.*;
 
 public abstract class Account implements Serializable {
 	
@@ -27,6 +26,12 @@ public abstract class Account implements Serializable {
 	{
 		//returns account number
 		return this.accountNumber;
+	}
+	
+	public String getAccountOwner()
+	{
+		//returns account number
+		return owner;
 	}
 	
 	public void setNumber(int accountNumber)

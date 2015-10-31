@@ -3,6 +3,7 @@ package project3;
 import java.io.*;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.GregorianCalendar;
 import javax.swing.table.AbstractTableModel;
 
@@ -171,6 +172,20 @@ public class BankModel extends AbstractTableModel {
 		}
 		// default return
 		return " ";
+	}
+	
+	public void sortByNum(){
+		if(accounts.size() > 1){
+			Collections.sort(accounts, new AccountNumberComparator());
+			this.fireTableRowsUpdated(0, accounts.size() - 1);
+		}
+	}
+	
+	public void sortByName(){
+		if(accounts.size() > 1){
+			Collections.sort(accounts, new AccountOwnerComparator());
+			this.fireTableRowsUpdated(0, accounts.size() - 1);
+		}
 	}
 
 	public void loadBinary(String filename,
