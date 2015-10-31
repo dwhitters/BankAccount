@@ -76,9 +76,6 @@ public abstract class Account implements Serializable {
 		this.dateOpened = dateOpened;
 	}
 
-	//returns all account data in String format
-	public abstract String toString();
-	
 	public String getStrDateOpened(){
 		String date = Integer.toString(
 				dateOpened.get(dateOpened.MONTH)+1) + "/" + 
@@ -88,4 +85,6 @@ public abstract class Account implements Serializable {
 								dateOpened.get(dateOpened.YEAR));
 		return date;
 	}
+	
+	public abstract String toString();
 }

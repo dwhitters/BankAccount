@@ -300,7 +300,7 @@ public class BankGUI extends JFrame {
 				File f = new File(filename);
 				
 				if(f.exists() && !f.isDirectory()) { 
-					bankModel.loadBinary(filename, bankModel);
+					bankModel.loadBinary(filename);
 				}
 				else
 					JOptionPane.showMessageDialog(new JFrame(),
@@ -309,8 +309,8 @@ public class BankGUI extends JFrame {
 			if (event.getSource() == fileItems[1]) {
 				// Binary Save
 				String filename = getFileName("Please enter filename to save to:");
-				bankModel.saveBinary(filename);
-				//No need for error checking
+				if(filename.length() > 0)
+					bankModel.saveBinary(filename);
 			}
 			if (event.getSource() == fileItems[2]) {
 				// Text Load
@@ -318,7 +318,7 @@ public class BankGUI extends JFrame {
 				File f = new File(filename);
 				
 				if(f.exists() && !f.isDirectory()) { 
-					bankModel.loadText(filename, bankModel);
+					bankModel.loadText(filename);
 				}
 				else
 					JOptionPane.showMessageDialog(new JFrame(),
@@ -327,13 +327,26 @@ public class BankGUI extends JFrame {
 			if (event.getSource() == fileItems[3]) {
 				// text save
 				String filename = getFileName("Please enter filename to save to:");
-				bankModel.saveText(filename, bankModel);
+				if(filename.length() > 0)
+					bankModel.saveText(filename);
 			}
 			if (event.getSource() == fileItems[4]) {
 				// XML load
+				String filename = getFileName("Please enter filename to load:");
+				File f = new File(filename);
+				
+				if(f.exists() && !f.isDirectory()) { 
+					bankModel.loadXML(filename);
+				}
+				else
+					JOptionPane.showMessageDialog(new JFrame(),
+						    "ERROR: FILE DOES NOT EXIST");
 			}
 			if (event.getSource() == fileItems[5]) {
 				// XML save
+				String filename = getFileName("Please enter filename to save to:");
+				if(filename.length() > 0)
+					bankModel.saveToXML(filename);
 			}
 			if (event.getSource() == fileItems[6]) {
 				// quit
@@ -341,7 +354,6 @@ public class BankGUI extends JFrame {
 			}
 			if (event.getSource() == sortItems[0]) {
 				// sort by account number
-				
 				bankModel.sortByNum();
 			}
 			if (event.getSource() == sortItems[1]) {
@@ -349,22 +361,27 @@ public class BankGUI extends JFrame {
 				bankModel.sortByName();
 			}
 			if (event.getSource() == sortItems[2]) {
-
 				bankModel.sortByDateOpened();
 
 				// sort by date
 			}
 		}
 		private String getFileName(String message){
-			String filename = (String)JOptionPane.showInputDialog(
-					new JFrame(),
-                    message,
-                    "File Name Input",
-                    JOptionPane.PLAIN_MESSAGE,
-                    null,
-                    null,
-                    null);
-			return filename;
+			try{
+				String filename = "";
+				 filename = (String)JOptionPane.showInputDialog(
+						new JFrame(),
+	                    message,
+	                    "File Name Input",
+	                    JOptionPane.PLAIN_MESSAGE,
+	                    null,
+	                    null,
+	                    null);
+				return filename;
+			}
+			catch(Exception e){}
+
+			return "";
 		}
 	}
 
