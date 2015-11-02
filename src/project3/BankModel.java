@@ -18,8 +18,12 @@ public class BankModel extends AbstractTableModel {
 
 	// storage for accounts
 	public static ArrayList<Account> accounts = new ArrayList<Account>();
+<<<<<<< HEAD
 
 	// format variables
+=======
+	//format variables
+>>>>>>> 3a03d7f82286d2a99a946f5aeccc6f418daf4f6f
 	private SimpleDateFormat date = new SimpleDateFormat("MM/dd/yyyy");
 
 	// table information
@@ -162,15 +166,14 @@ public class BankModel extends AbstractTableModel {
 				return date.format(accounts.get(rowIndex)
 						.getDateOpened().getTime());
 			case 3:
-				return accounts.get(rowIndex).getBalance();
+				return String.format("$%.2f", accounts.get(rowIndex).getBalance());
 			case 4:
 				return "";
 			case 5:
-				return ((SavingsAccount) accounts.get(rowIndex))
-						.getInterestRate();
+				return String.format("%.3f%%", ((SavingsAccount) accounts.get(rowIndex)).getInterestRate());
 			case 6:
-				return ((SavingsAccount) accounts.get(rowIndex))
-						.getMinimumBalance();
+				return String.format("$%.2f", ((SavingsAccount) accounts.get(rowIndex))
+						.getMinimumBalance());
 			}
 		} else {
 			switch (columnIndex) {
@@ -182,10 +185,10 @@ public class BankModel extends AbstractTableModel {
 				return date.format(accounts.get(rowIndex)
 						.getDateOpened().getTime());
 			case 3:
-				return accounts.get(rowIndex).getBalance();
+				return String.format("$%.2f", accounts.get(rowIndex).getBalance());
 			case 4:
-				return ((CheckingAccount) accounts.get(rowIndex))
-						.getMonthlyFee();
+				return String.format("$%.2f", ((CheckingAccount) accounts.get(rowIndex))
+						.getMonthlyFee());
 			case 5:
 				return "";
 			case 6:
