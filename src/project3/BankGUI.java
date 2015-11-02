@@ -32,9 +32,9 @@ public class BankGUI extends JFrame {
 	private JRadioButton savings;
 	private JRadioButton checking;
 	private ButtonGroup group;
-	private JButton[] modifyButton = new JButton[4];
-	private JLabel[] descriptLabels = new JLabel[7];
-	private JFormattedTextField[] textInputs = new JFormattedTextField[7];
+	private JButton[] modifyButton;
+	private JLabel[] descriptLabels;
+	private JFormattedTextField[] textInputs;
 
 	// listener variables
 	private ButtonListener buttonListener;
@@ -42,7 +42,7 @@ public class BankGUI extends JFrame {
 	private TableListener tableListener;
 
 	// table variables
-	private JTable table = new JTable();
+	private JTable table;
 	private JScrollPane scrollPane;
 
 	// bank model
@@ -56,16 +56,19 @@ public class BankGUI extends JFrame {
 		// title
 		super("Bank Application");
 
+		modifyButton = new JButton[4];
+		descriptLabels = new JLabel[7];
+		textInputs = new JFormattedTextField[7];
+		table = new JTable();
 		// setup model
 		bankModel = new BankModel();
-
+	
 		// instantiate panels
 		mainPanel = new JPanel();
 		tablePanel = new JPanel();
 		gridLabelPanel = new JPanel();
 		gridTextPanel = new JPanel();
 		boxPanel = new JPanel();
-
 		// format text fields
 		formatTextFields();
 
@@ -245,6 +248,8 @@ public class BankGUI extends JFrame {
 
 		// setup table
 		table = new JTable(bankModel);
+		table.getTableHeader().setReorderingAllowed(false);
+		table.getTableHeader().setResizingAllowed(false);
 		scrollPane = new JScrollPane(table);
 		table.setFillsViewportHeight(true);
 
