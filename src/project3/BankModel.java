@@ -70,31 +70,42 @@ public class BankModel extends AbstractTableModel {
 		this.fireTableDataChanged();
 	}
 
-	public void add(int number, String owner,
+	public int add(int number, String owner,
 			GregorianCalendar dateOpened, double balance,
 			double monthlyFee, double interestRate,
 			double minimumBalance, boolean isSavings) {
+		int errorCode = 0;
 
-		// add new data to account type
-		if (isSavings == true) {
-			// create savings account
-			SavingsAccount addedSavingsAccount = new SavingsAccount(
-					number, owner, dateOpened, balance, minimumBalance,
-					interestRate);
-
-			// add savings account to array
-			accounts.add(addedSavingsAccount);
-		} else {
-			// create checking account
-			CheckingAccount addedCheckingAccount = new CheckingAccount(
-					number, owner, dateOpened, balance, monthlyFee);
-
-			// add checking account to array
-			accounts.add(addedCheckingAccount);
+		for(int i = 0; i < accounts.size(); i ++){
+			if(accounts.get(i).getAccountNumber() == number)
+				errorCode = 2;
 		}
-
-		// tell table to update
-		this.fireTableDataChanged();
+		if(minimumBalance <= balance && errorCode == 0){
+			// add new data to account type
+			if (isSavings == true) {
+				// create savings account
+				SavingsAccount addedSavingsAccount = new SavingsAccount(
+						number, owner, dateOpened, balance, minimumBalance,
+						interestRate);
+	
+				// add savings account to array
+				accounts.add(addedSavingsAccount);
+			} else {
+				// create checking account
+				CheckingAccount addedCheckingAccount = new CheckingAccount(
+						number, owner, dateOpened, balance, monthlyFee);
+	
+				// add checking account to array
+				accounts.add(addedCheckingAccount);
+			}
+	
+			// tell table to update
+			this.fireTableDataChanged();
+		}
+		else if(minimumBalance > balance)
+			errorCode = 1;
+		
+		return errorCode;
 	}
 
 	public void delete(int selectedRow) {

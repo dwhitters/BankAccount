@@ -298,65 +298,44 @@ public class BankGUI extends JFrame {
 				try {
 				// Binary Load
 				String filename = getFileName("Please enter filename to load:");
-				if(filename != null){
-					File f = new File(filename);
-					
-					if(f.exists() && !f.isDirectory()) { 
-						bankModel.loadBinary(filename);
-					}
-					else
-						JOptionPane.showMessageDialog(new JFrame(),
-							    "ERROR: FILE DOES NOT EXIST");
+				File f = new File(filename);
+				
+				if(f.exists() && !f.isDirectory()) { 
+					bankModel.loadBinary(filename);
 				}
 				else
 					JOptionPane.showMessageDialog(new JFrame(),
 						    "ERROR: FILE DOES NOT EXIST");
 				}
-				catch (Exception e)
-				{
-					
-				}
+				catch (Exception e){}
 			}
 			if (event.getSource() == fileItems[1]) {
 				try{
 				// Binary Save
 				String filename = getFileName("Please enter filename to save to:");
-				if(filename != null)
-					bankModel.saveBinary(filename);
+				bankModel.saveBinary(filename);
 				}
-				catch (Exception e)
-				{
-					
-				}
+				catch (Exception e){}			
 			}
 			if (event.getSource() == fileItems[2]) {
 				try {
 				// Text Load
 				String filename = getFileName("Please enter filename to load");
-				if(filename != null){
-					File f = new File(filename);
-					
-					if(f.exists() && !f.isDirectory()) { 
-						bankModel.loadText(filename);
-					}
-					else
-						JOptionPane.showMessageDialog(new JFrame(),
-							    "ERROR: FILE DOES NOT EXIST");
+				File f = new File(filename);
+				
+				if(f.exists() && !f.isDirectory()) { 
+					bankModel.loadText(filename);
 				}
 				else
 					JOptionPane.showMessageDialog(new JFrame(),
 						    "ERROR: FILE DOES NOT EXIST");
 				}
-				catch (Exception e)
-				{
-					//do nothing for cancel button
-				}
+				catch (Exception e){}
 			}
 			if (event.getSource() == fileItems[3]) {
 				try{
 				// text save
 				String filename = getFileName("Please enter filename to save to:");
-				if(filename != null)
 					bankModel.saveText(filename);
 				}
 				catch (Exception e){
@@ -367,15 +346,10 @@ public class BankGUI extends JFrame {
 				// XML load
 				try {
 				String filename = getFileName("Please enter filename to load:");
-				if(filename != null){
-					File f = new File(filename);
-					
-					if(f.exists() && !f.isDirectory()) { 
-						bankModel.loadXML(filename);
-					}
-					else
-						JOptionPane.showMessageDialog(new JFrame(),
-							    "ERROR: FILE DOES NOT EXIST");
+				File f = new File(filename);
+				
+				if(f.exists() && !f.isDirectory()) { 
+					bankModel.loadXML(filename);
 				}
 				else
 					JOptionPane.showMessageDialog(new JFrame(),
@@ -390,13 +364,9 @@ public class BankGUI extends JFrame {
 				// XML save
 				try {
 				String filename = getFileName("Please enter filename to save to:");
-				if(filename != null)
-					bankModel.saveToXML(filename);
+				bankModel.saveToXML(filename);
 				}
-				catch (Exception e)
-				{
-					//cancel operation
-				}
+				catch (Exception e){}
 			}
 			if (event.getSource() == fileItems[6]) {
 				// quit
@@ -429,9 +399,9 @@ public class BankGUI extends JFrame {
 	                    null);
 				return filename;
 			}
-			catch(Exception e){}
-
-			return "";
+			catch(Exception e){
+				return "";
+			}
 		}
 	}
 
@@ -445,7 +415,7 @@ public class BankGUI extends JFrame {
 
 		@Override
 		public void mouseEntered(MouseEvent arg0) {
-
+			
 			//do nothing
 		}
 
@@ -480,6 +450,7 @@ public class BankGUI extends JFrame {
 					double interestRate;
 					double minimumBalance;
 					boolean isSavings = savings.isSelected();
+					int errorCode;
 
 					// get information from text fields
 					int number = Integer
@@ -516,9 +487,17 @@ public class BankGUI extends JFrame {
 					}
 
 					// send collected data to bankModel
-						bankModel.add(number, owner, dateOpened,
-							accountBalance, monthlyFee, interestRate,
-							minimumBalance, isSavings);
+					errorCode = bankModel.add(number, owner, 
+						dateOpened, accountBalance, monthlyFee, 
+						interestRate, minimumBalance, isSavings);
+					
+					if(errorCode == 1)
+						JOptionPane.showMessageDialog(new JFrame(),
+							    "ERROR: BALANCE MUST BE GREATER THAN " + 
+									"MINIMUM BALANCE");
+					else if(errorCode == 2)
+						JOptionPane.showMessageDialog(new JFrame(),
+							    "ERROR: ACCOUNT NUMBER ALREADY EXISTS");
 				} catch (Exception e) {
 					// display error message to user
 					JOptionPane.showMessageDialog(null,
