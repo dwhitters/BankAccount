@@ -112,7 +112,6 @@ public class BankModel extends AbstractTableModel {
 	}
 
 	public void delete(int selectedRow) {
-
 		// delete defined row
 		accounts.remove(selectedRow);
 
@@ -121,7 +120,6 @@ public class BankModel extends AbstractTableModel {
 	}
 
 	public Account getAccountInRow(int row) {
-
 		// return account in defined row
 		return accounts.get(row);
 	}
@@ -195,7 +193,6 @@ public class BankModel extends AbstractTableModel {
 	}
 
 	public void sortByNum() {
-
 		if (accounts.size() > 1) {
 			Collections.sort(accounts, new AccountNumberComparator());
 			this.fireTableRowsUpdated(0, accounts.size() - 1);
@@ -203,7 +200,6 @@ public class BankModel extends AbstractTableModel {
 	}
 
 	public void sortByName() {
-
 		if (accounts.size() > 1) {
 			Collections.sort(accounts, new AccountOwnerComparator());
 			this.fireTableRowsUpdated(0, accounts.size() - 1);
@@ -211,13 +207,11 @@ public class BankModel extends AbstractTableModel {
 	}
 
 	public void sortByDateOpened() {
-
 		Collections.sort(accounts, new DateComparator());
 		this.fireTableDataChanged();
 	}
 
 	public void loadBinary(String filename) {
-
 		try {
 			// Sets accounts equal to the ArrayList read from the
 			// file
@@ -252,7 +246,6 @@ public class BankModel extends AbstractTableModel {
 	}
 
 	public void saveBinary(String filename) {
-
 		try {
 			// Saves the arraylist of accounts to the passed filename
 			FileOutputStream fos = null;
@@ -274,7 +267,6 @@ public class BankModel extends AbstractTableModel {
 	}
 
 	public void loadText(String filename) {
-
 		try {
 			int fileLength = 0;
 			String lineData = "";
@@ -355,7 +347,6 @@ public class BankModel extends AbstractTableModel {
 	}
 
 	public void saveText(String filename) {
-
 		try {
 			FileWriter write = null;
 			PrintWriter pw = null;
@@ -385,7 +376,6 @@ public class BankModel extends AbstractTableModel {
 	}
 
 	public void loadXML(String filename) {
-
 		ArrayList<Account> accounts = new ArrayList<Account>();
 		try {
 			File fXmlFile = new File(filename);
@@ -473,7 +463,6 @@ public class BankModel extends AbstractTableModel {
 	}
 
 	public void saveToXML(String filename) {
-
 		try {
 			DocumentBuilderFactory docFactory = DocumentBuilderFactory
 					.newInstance();
