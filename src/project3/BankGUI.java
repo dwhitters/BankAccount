@@ -13,7 +13,6 @@ import javax.swing.*;
 
 public class BankGUI extends JFrame {
 
-	// menu variables
 	public JMenuBar menuBar;
 	private JMenu file;
 	private JMenu sort;
