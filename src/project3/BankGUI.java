@@ -308,7 +308,6 @@ public class BankGUI extends JFrame {
 						JOptionPane.showMessageDialog(new JFrame(),
 							    "ERROR: FILE DOES NOT EXIST");
 				}
-<<<<<<< HEAD
 				else
 					JOptionPane.showMessageDialog(new JFrame(),
 						    "ERROR: FILE DOES NOT EXIST");
@@ -317,8 +316,6 @@ public class BankGUI extends JFrame {
 				{
 					
 				}
-=======
->>>>>>> fd0f2b789f4ed1fb617fa2f527f8a209827a4c8c
 			}
 			if (event.getSource() == fileItems[1]) {
 				try{
@@ -346,7 +343,6 @@ public class BankGUI extends JFrame {
 						JOptionPane.showMessageDialog(new JFrame(),
 							    "ERROR: FILE DOES NOT EXIST");
 				}
-<<<<<<< HEAD
 				else
 					JOptionPane.showMessageDialog(new JFrame(),
 						    "ERROR: FILE DOES NOT EXIST");
@@ -355,8 +351,6 @@ public class BankGUI extends JFrame {
 				{
 					//do nothing for cancel button
 				}
-=======
->>>>>>> fd0f2b789f4ed1fb617fa2f527f8a209827a4c8c
 			}
 			if (event.getSource() == fileItems[3]) {
 				try{
@@ -383,7 +377,6 @@ public class BankGUI extends JFrame {
 						JOptionPane.showMessageDialog(new JFrame(),
 							    "ERROR: FILE DOES NOT EXIST");
 				}
-<<<<<<< HEAD
 				else
 					JOptionPane.showMessageDialog(new JFrame(),
 						    "ERROR: FILE DOES NOT EXIST");
@@ -392,8 +385,6 @@ public class BankGUI extends JFrame {
 				{
 					//do nothing for cancel
 				}
-=======
->>>>>>> fd0f2b789f4ed1fb617fa2f527f8a209827a4c8c
 			}
 			if (event.getSource() == fileItems[5]) {
 				// XML save
