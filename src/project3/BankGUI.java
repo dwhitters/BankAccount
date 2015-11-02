@@ -31,9 +31,9 @@ public class BankGUI extends JFrame {
 	private JRadioButton savings;
 	private JRadioButton checking;
 	private ButtonGroup group;
-	private JButton[] modifyButton;
-	private JLabel[] descriptLabels;
-	private JFormattedTextField[] textInputs;
+	private JButton[] modifyButton = new JButton[4];
+	private JLabel[] descriptLabels = new JLabel[7];
+	private JFormattedTextField[] textInputs = new JFormattedTextField[7];
 
 	// listener variables
 	private ButtonListener buttonListener;
@@ -41,7 +41,7 @@ public class BankGUI extends JFrame {
 	private TableListener tableListener;
 
 	// table variables
-	private JTable table;
+	private JTable table = new JTable();
 	private JScrollPane scrollPane;
 
 	// bank model
@@ -54,27 +54,20 @@ public class BankGUI extends JFrame {
 		// title
 		super("Bank Application");
 
-		modifyButton = new JButton[4];
-		descriptLabels = new JLabel[7];
-		textInputs = new JFormattedTextField[7];
-		table = new JTable();
 		// setup model
 		bankModel = new BankModel();
-<<<<<<< HEAD
 
 		// setup SimpleDateFormat
 		dateFormat = new SimpleDateFormat("MM/dd/yyyy");
 		dateFormat.setLenient(false);
 
-=======
-	
->>>>>>> 3a03d7f82286d2a99a946f5aeccc6f418daf4f6f
 		// instantiate panels
 		mainPanel = new JPanel();
 		tablePanel = new JPanel();
 		gridLabelPanel = new JPanel();
 		gridTextPanel = new JPanel();
 		boxPanel = new JPanel();
+
 		// format text fields
 		formatTextFields();
 
@@ -126,12 +119,6 @@ public class BankGUI extends JFrame {
 		mainPanel.add(gridTextPanel, BorderLayout.CENTER);
 		mainPanel.add(boxPanel, BorderLayout.EAST);
 		add(mainPanel);
-	}
-
-	private void textFieldAngry(String key) {
-
-		JOptionPane.showMessageDialog(new JFrame(), key
-				+ " is formatted incorrectly and has been erased.\nPlease try again.");
 	}
 
 	private void formatTextFields() {
@@ -260,8 +247,6 @@ public class BankGUI extends JFrame {
 
 		// setup table
 		table = new JTable(bankModel);
-		table.getTableHeader().setReorderingAllowed(false);
-		table.getTableHeader().setResizingAllowed(false);
 		scrollPane = new JScrollPane(table);
 		table.setFillsViewportHeight(true);
 
@@ -530,10 +515,7 @@ public class BankGUI extends JFrame {
 			if (event.getSource() == modifyButton[1]) {
 				// delete selected row
 				try {
-					int result = JOptionPane.showConfirmDialog((Component) null, "Are you sure?",
-				        "Confirm", JOptionPane.OK_CANCEL_OPTION);
-					if(result == 0)
-						bankModel.delete(table.getSelectedRow());
+					bankModel.delete(table.getSelectedRow());
 				} catch (Exception e) {
 					// display error message to user
 					JOptionPane.showMessageDialog(null,

@@ -18,12 +18,8 @@ public class BankModel extends AbstractTableModel {
 
 	// storage for accounts
 	public static ArrayList<Account> accounts = new ArrayList<Account>();
-<<<<<<< HEAD
 
-	// format variables
-=======
 	//format variables
->>>>>>> 3a03d7f82286d2a99a946f5aeccc6f418daf4f6f
 	private SimpleDateFormat date = new SimpleDateFormat("MM/dd/yyyy");
 
 	// table information
