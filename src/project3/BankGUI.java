@@ -248,6 +248,8 @@ public class BankGUI extends JFrame {
 		table = new JTable(bankModel);
 		scrollPane = new JScrollPane(table);
 		table.setFillsViewportHeight(true);
+		table.getTableHeader().setReorderingAllowed(false);
+		table.getTableHeader().setResizingAllowed(false);
 
 		// listener
 		tableListener = new TableListener();
@@ -514,7 +516,11 @@ public class BankGUI extends JFrame {
 			if (event.getSource() == modifyButton[1]) {
 				// delete selected row
 				try {
-					bankModel.delete(table.getSelectedRow());
+					int result = JOptionPane.showConfirmDialog(
+							(Component) null, "Are you sure?",
+							"Confirm", JOptionPane.OK_CANCEL_OPTION);
+					if(result == 0)
+						bankModel.delete(table.getSelectedRow());
 				} catch (Exception e) {
 					// display error message to user
 					JOptionPane.showMessageDialog(null,
