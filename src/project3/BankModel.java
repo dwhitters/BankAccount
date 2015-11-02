@@ -441,21 +441,11 @@ public class BankModel extends AbstractTableModel {
 
 					String date1[] = new String[3];
 					date1 = date.split("/");
-<<<<<<< HEAD
 
 					int month = Integer.parseInt(date1[0]);
 					int day = Integer.parseInt(date1[1]);
 					int year = Integer.parseInt(date1[2]);
-=======
-					
-					int month = Integer
-							.parseInt(date1[0]);
-					
-					int day = Integer
-							.parseInt(date1[1]);
-					int year = Integer.parseInt(
-							date1[2]);
->>>>>>> 6dfe6d203c16c006fdeedcef9fa2f5f09e2d0693
+
 					GregorianCalendar dateOpened = new GregorianCalendar(
 							year, month - 1, day);
 
