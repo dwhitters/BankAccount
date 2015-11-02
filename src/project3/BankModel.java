@@ -415,6 +415,7 @@ public class BankModel extends AbstractTableModel {
 					
 					int month = Integer
 							.parseInt(date1[0]);
+					
 					int day = Integer
 							.parseInt(date1[1]);
 					int year = Integer.parseInt(
