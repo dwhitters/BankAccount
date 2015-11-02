@@ -298,11 +298,17 @@ public class BankGUI extends JFrame {
 				try {
 				// Binary Load
 				String filename = getFileName("Please enter filename to load:");
-				File f = new File(filename);
-				
-				if(f.exists() && !f.isDirectory()) { 
-					bankModel.loadBinary(filename);
+				if(filename != null){
+					File f = new File(filename);
+					
+					if(f.exists() && !f.isDirectory()) { 
+						bankModel.loadBinary(filename);
+					}
+					else
+						JOptionPane.showMessageDialog(new JFrame(),
+							    "ERROR: FILE DOES NOT EXIST");
 				}
+<<<<<<< HEAD
 				else
 					JOptionPane.showMessageDialog(new JFrame(),
 						    "ERROR: FILE DOES NOT EXIST");
@@ -311,12 +317,14 @@ public class BankGUI extends JFrame {
 				{
 					
 				}
+=======
+>>>>>>> fd0f2b789f4ed1fb617fa2f527f8a209827a4c8c
 			}
 			if (event.getSource() == fileItems[1]) {
 				try{
 				// Binary Save
 				String filename = getFileName("Please enter filename to save to:");
-				if(filename.length() > 0)
+				if(filename != null)
 					bankModel.saveBinary(filename);
 				}
 				catch (Exception e)
@@ -328,11 +336,17 @@ public class BankGUI extends JFrame {
 				try {
 				// Text Load
 				String filename = getFileName("Please enter filename to load");
-				File f = new File(filename);
-				
-				if(f.exists() && !f.isDirectory()) { 
-					bankModel.loadText(filename);
+				if(filename != null){
+					File f = new File(filename);
+					
+					if(f.exists() && !f.isDirectory()) { 
+						bankModel.loadText(filename);
+					}
+					else
+						JOptionPane.showMessageDialog(new JFrame(),
+							    "ERROR: FILE DOES NOT EXIST");
 				}
+<<<<<<< HEAD
 				else
 					JOptionPane.showMessageDialog(new JFrame(),
 						    "ERROR: FILE DOES NOT EXIST");
@@ -341,12 +355,14 @@ public class BankGUI extends JFrame {
 				{
 					//do nothing for cancel button
 				}
+=======
+>>>>>>> fd0f2b789f4ed1fb617fa2f527f8a209827a4c8c
 			}
 			if (event.getSource() == fileItems[3]) {
 				try{
 				// text save
 				String filename = getFileName("Please enter filename to save to:");
-				if(filename.length() > 0)
+				if(filename != null)
 					bankModel.saveText(filename);
 				}
 				catch (Exception e){
@@ -357,11 +373,17 @@ public class BankGUI extends JFrame {
 				// XML load
 				try {
 				String filename = getFileName("Please enter filename to load:");
-				File f = new File(filename);
-				
-				if(f.exists() && !f.isDirectory()) { 
-					bankModel.loadXML(filename);
+				if(filename != null){
+					File f = new File(filename);
+					
+					if(f.exists() && !f.isDirectory()) { 
+						bankModel.loadXML(filename);
+					}
+					else
+						JOptionPane.showMessageDialog(new JFrame(),
+							    "ERROR: FILE DOES NOT EXIST");
 				}
+<<<<<<< HEAD
 				else
 					JOptionPane.showMessageDialog(new JFrame(),
 						    "ERROR: FILE DOES NOT EXIST");
@@ -370,12 +392,14 @@ public class BankGUI extends JFrame {
 				{
 					//do nothing for cancel
 				}
+=======
+>>>>>>> fd0f2b789f4ed1fb617fa2f527f8a209827a4c8c
 			}
 			if (event.getSource() == fileItems[5]) {
 				// XML save
 				try {
 				String filename = getFileName("Please enter filename to save to:");
-				if(filename.length() > 0)
+				if(filename != null)
 					bankModel.saveToXML(filename);
 				}
 				catch (Exception e)
@@ -501,7 +525,7 @@ public class BankGUI extends JFrame {
 					}
 
 					// send collected data to bankModel
-					bankModel.add(number, owner, dateOpened,
+						bankModel.add(number, owner, dateOpened,
 							accountBalance, monthlyFee, interestRate,
 							minimumBalance, isSavings);
 				} catch (Exception e) {
