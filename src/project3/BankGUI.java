@@ -295,6 +295,7 @@ public class BankGUI extends JFrame {
 		public void actionPerformed(ActionEvent event) {
 
 			if (event.getSource() == fileItems[0]) {
+				try {
 				// Binary Load
 				String filename = getFileName("Please enter filename to load:");
 				File f = new File(filename);
@@ -305,14 +306,26 @@ public class BankGUI extends JFrame {
 				else
 					JOptionPane.showMessageDialog(new JFrame(),
 						    "ERROR: FILE DOES NOT EXIST");
+				}
+				catch (Exception e)
+				{
+					
+				}
 			}
 			if (event.getSource() == fileItems[1]) {
+				try{
 				// Binary Save
 				String filename = getFileName("Please enter filename to save to:");
 				if(filename.length() > 0)
 					bankModel.saveBinary(filename);
+				}
+				catch (Exception e)
+				{
+					
+				}
 			}
 			if (event.getSource() == fileItems[2]) {
+				try {
 				// Text Load
 				String filename = getFileName("Please enter filename to load");
 				File f = new File(filename);
@@ -323,15 +336,26 @@ public class BankGUI extends JFrame {
 				else
 					JOptionPane.showMessageDialog(new JFrame(),
 						    "ERROR: FILE DOES NOT EXIST");
+				}
+				catch (Exception e)
+				{
+					//do nothing for cancel button
+				}
 			}
 			if (event.getSource() == fileItems[3]) {
+				try{
 				// text save
 				String filename = getFileName("Please enter filename to save to:");
 				if(filename.length() > 0)
 					bankModel.saveText(filename);
+				}
+				catch (Exception e){
+					//do nothing for cancel
+				}
 			}
 			if (event.getSource() == fileItems[4]) {
 				// XML load
+				try {
 				String filename = getFileName("Please enter filename to load:");
 				File f = new File(filename);
 				
@@ -341,12 +365,23 @@ public class BankGUI extends JFrame {
 				else
 					JOptionPane.showMessageDialog(new JFrame(),
 						    "ERROR: FILE DOES NOT EXIST");
+				}
+				catch (Exception e)
+				{
+					//do nothing for cancel
+				}
 			}
 			if (event.getSource() == fileItems[5]) {
 				// XML save
+				try {
 				String filename = getFileName("Please enter filename to save to:");
 				if(filename.length() > 0)
 					bankModel.saveToXML(filename);
+				}
+				catch (Exception e)
+				{
+					//cancel operation
+				}
 			}
 			if (event.getSource() == fileItems[6]) {
 				// quit
