@@ -5,7 +5,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.awt.event.WindowEvent;
 import java.io.File;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
@@ -49,8 +48,7 @@ public class BankGUI extends JFrame {
 	private BankModel bankModel;
 
 	// format variables
-	private SimpleDateFormat dateFormat = new SimpleDateFormat(
-			"MM/dd/yyyy");
+	private SimpleDateFormat dateFormat;
 
 	public BankGUI() {
 		// title
@@ -58,6 +56,10 @@ public class BankGUI extends JFrame {
 
 		// setup model
 		bankModel = new BankModel();
+
+		// setup SimpleDateFormat
+		dateFormat = new SimpleDateFormat("MM/dd/yyyy");
+		dateFormat.setLenient(false);
 
 		// instantiate panels
 		mainPanel = new JPanel();
@@ -117,6 +119,12 @@ public class BankGUI extends JFrame {
 		mainPanel.add(gridTextPanel, BorderLayout.CENTER);
 		mainPanel.add(boxPanel, BorderLayout.EAST);
 		add(mainPanel);
+	}
+
+	private void textFieldAngry(String key) {
+
+		JOptionPane.showMessageDialog(new JFrame(), key
+				+ " is formatted incorrectly and has been erased.\nPlease try again.");
 	}
 
 	private void formatTextFields() {
@@ -257,7 +265,8 @@ public class BankGUI extends JFrame {
 
 		// empty all text fields
 		for (int i = 0; i < 7; i++) {
-			textInputs[i].setText("");
+			textInputs[i].setValue(null);
+			textInputs[1].setText("");
 		}
 	}
 
@@ -296,77 +305,77 @@ public class BankGUI extends JFrame {
 
 			if (event.getSource() == fileItems[0]) {
 				try {
-				// Binary Load
-				String filename = getFileName("Please enter filename to load:");
-				File f = new File(filename);
-				
-				if(f.exists() && !f.isDirectory()) { 
-					bankModel.loadBinary(filename);
+					// Binary Load
+					String filename = getFileName(
+							"Please enter filename to load:");
+					File f = new File(filename);
+
+					if (f.exists() && !f.isDirectory()) {
+						bankModel.loadBinary(filename);
+					} else
+						JOptionPane.showMessageDialog(new JFrame(),
+								"ERROR: FILE DOES NOT EXIST");
+				} catch (Exception e) {
 				}
-				else
-					JOptionPane.showMessageDialog(new JFrame(),
-						    "ERROR: FILE DOES NOT EXIST");
-				}
-				catch (Exception e){}
 			}
 			if (event.getSource() == fileItems[1]) {
-				try{
-				// Binary Save
-				String filename = getFileName("Please enter filename to save to:");
-				bankModel.saveBinary(filename);
+				try {
+					// Binary Save
+					String filename = getFileName(
+							"Please enter filename to save to:");
+					bankModel.saveBinary(filename);
+				} catch (Exception e) {
 				}
-				catch (Exception e){}			
 			}
 			if (event.getSource() == fileItems[2]) {
 				try {
-				// Text Load
-				String filename = getFileName("Please enter filename to load");
-				File f = new File(filename);
-				
-				if(f.exists() && !f.isDirectory()) { 
-					bankModel.loadText(filename);
+					// Text Load
+					String filename = getFileName(
+							"Please enter filename to load");
+					File f = new File(filename);
+
+					if (f.exists() && !f.isDirectory()) {
+						bankModel.loadText(filename);
+					} else
+						JOptionPane.showMessageDialog(new JFrame(),
+								"ERROR: FILE DOES NOT EXIST");
+				} catch (Exception e) {
 				}
-				else
-					JOptionPane.showMessageDialog(new JFrame(),
-						    "ERROR: FILE DOES NOT EXIST");
-				}
-				catch (Exception e){}
 			}
 			if (event.getSource() == fileItems[3]) {
-				try{
-				// text save
-				String filename = getFileName("Please enter filename to save to:");
+				try {
+					// text save
+					String filename = getFileName(
+							"Please enter filename to save to:");
 					bankModel.saveText(filename);
-				}
-				catch (Exception e){
-					//do nothing for cancel
+				} catch (Exception e) {
+					// do nothing for cancel
 				}
 			}
 			if (event.getSource() == fileItems[4]) {
 				// XML load
 				try {
-				String filename = getFileName("Please enter filename to load:");
-				File f = new File(filename);
-				
-				if(f.exists() && !f.isDirectory()) { 
-					bankModel.loadXML(filename);
-				}
-				else
-					JOptionPane.showMessageDialog(new JFrame(),
-						    "ERROR: FILE DOES NOT EXIST");
-				}
-				catch (Exception e)
-				{
-					//do nothing for cancel
+					String filename = getFileName(
+							"Please enter filename to load:");
+					File f = new File(filename);
+
+					if (f.exists() && !f.isDirectory()) {
+						bankModel.loadXML(filename);
+					} else
+						JOptionPane.showMessageDialog(new JFrame(),
+								"ERROR: FILE DOES NOT EXIST");
+				} catch (Exception e) {
+					// do nothing for cancel
 				}
 			}
 			if (event.getSource() == fileItems[5]) {
 				// XML save
 				try {
-				String filename = getFileName("Please enter filename to save to:");
-				bankModel.saveToXML(filename);
+					String filename = getFileName(
+							"Please enter filename to save to:");
+					bankModel.saveToXML(filename);
+				} catch (Exception e) {
 				}
-				catch (Exception e){}
 			}
 			if (event.getSource() == fileItems[6]) {
 				// quit
@@ -386,20 +395,16 @@ public class BankGUI extends JFrame {
 				// sort by date
 			}
 		}
-		private String getFileName(String message){
-			try{
+
+		private String getFileName(String message) {
+
+			try {
 				String filename = "";
-				 filename = (String)JOptionPane.showInputDialog(
-						new JFrame(),
-	                    message,
-	                    "File Name Input",
-	                    JOptionPane.PLAIN_MESSAGE,
-	                    null,
-	                    null,
-	                    null);
+				filename = (String) JOptionPane.showInputDialog(
+						new JFrame(), message, "File Name Input",
+						JOptionPane.PLAIN_MESSAGE, null, null, null);
 				return filename;
-			}
-			catch(Exception e){
+			} catch (Exception e) {
 				return "";
 			}
 		}
@@ -409,14 +414,16 @@ public class BankGUI extends JFrame {
 
 		@Override
 		public void mouseClicked(MouseEvent arg0) {
-			if(table.getSelectedRow() >= 0)
-				updateFields(bankModel.getAccountInRow(table.getSelectedRow()));
+
+			if (table.getSelectedRow() >= 0)
+				updateFields(bankModel
+						.getAccountInRow(table.getSelectedRow()));
 		}
 
 		@Override
 		public void mouseEntered(MouseEvent arg0) {
-			
-			//do nothing
+
+			// do nothing
 		}
 
 		@Override
@@ -427,8 +434,10 @@ public class BankGUI extends JFrame {
 
 		@Override
 		public void mousePressed(MouseEvent arg0) {
-			if(table.getSelectedRow() >= 0)
-				updateFields(bankModel.getAccountInRow(table.getSelectedRow()));
+
+			if (table.getSelectedRow() >= 0)
+				updateFields(bankModel
+						.getAccountInRow(table.getSelectedRow()));
 		}
 
 		@Override
@@ -487,17 +496,21 @@ public class BankGUI extends JFrame {
 					}
 
 					// send collected data to bankModel
-					errorCode = bankModel.add(number, owner, 
-						dateOpened, accountBalance, monthlyFee, 
-						interestRate, minimumBalance, isSavings);
-					
-					if(errorCode == 1)
+					errorCode = bankModel.add(number, owner, dateOpened,
+							accountBalance, monthlyFee, interestRate,
+							minimumBalance, isSavings);
+
+					if (errorCode == 1)
 						JOptionPane.showMessageDialog(new JFrame(),
-							    "ERROR: BALANCE MUST BE GREATER THAN " + 
-									"MINIMUM BALANCE");
-					else if(errorCode == 2)
+								"ERROR: BALANCE MUST BE GREATER THAN "
+										+ "MINIMUM BALANCE");
+					else if (errorCode == 2)
 						JOptionPane.showMessageDialog(new JFrame(),
-							    "ERROR: ACCOUNT NUMBER ALREADY EXISTS");
+								"ERROR: ACCOUNT NUMBER ALREADY EXISTS");
+					else if (errorCode == 3)
+						JOptionPane.showMessageDialog(new JFrame(),
+								"ERROR: ACCOUNT OWNER MUST HAVE A NAME.");
+
 				} catch (Exception e) {
 					// display error message to user
 					JOptionPane.showMessageDialog(null,
