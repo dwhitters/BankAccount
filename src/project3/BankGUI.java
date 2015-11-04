@@ -13,6 +13,7 @@ import javax.swing.*;
 
 public class BankGUI extends JFrame {
 
+	// menu variables
 	public JMenuBar menuBar;
 	private JMenu file;
 	private JMenu sort;
@@ -30,9 +31,9 @@ public class BankGUI extends JFrame {
 	private JRadioButton savings;
 	private JRadioButton checking;
 	private ButtonGroup group;
-	private JButton[] modifyButton = new JButton[4];
-	private JLabel[] descriptLabels = new JLabel[7];
-	private JFormattedTextField[] textInputs = new JFormattedTextField[7];
+	private JButton[] modifyButton;
+	private JLabel[] descriptLabels;
+	private JFormattedTextField[] textInputs;
 
 	// listener variables
 	private ButtonListener buttonListener;
@@ -40,7 +41,7 @@ public class BankGUI extends JFrame {
 	private TableListener tableListener;
 
 	// table variables
-	private JTable table = new JTable();
+	private JTable table;
 	private JScrollPane scrollPane;
 
 	// bank model
@@ -50,40 +51,43 @@ public class BankGUI extends JFrame {
 	private SimpleDateFormat dateFormat;
 
 	public BankGUI() {
-		// title
+		// title application
 		super("Bank Application");
 
-		// setup model
+		// setup BankModel
 		bankModel = new BankModel();
 
-		// setup SimpleDateFormat
+		// setup instance variables
 		dateFormat = new SimpleDateFormat("MM/dd/yyyy");
 		dateFormat.setLenient(false);
-
-		// instantiate panels
+		modifyButton = new JButton[4];
+		descriptLabels = new JLabel[7];
+		textInputs = new JFormattedTextField[7];
+		table = new JTable();
 		mainPanel = new JPanel();
 		tablePanel = new JPanel();
 		gridLabelPanel = new JPanel();
 		gridTextPanel = new JPanel();
 		boxPanel = new JPanel();
+		menuBar = new JMenuBar();
+		savings = new JRadioButton("Savings", true);
+		checking = new JRadioButton("Checking", false);
+		group = new ButtonGroup();
 
 		// format text fields
 		formatTextFields();
 
-		// file menu
-		menuBar = new JMenuBar();
-
+		// setup file menu
 		file = new JMenu("File");
 		file.getAccessibleContext()
 				.setAccessibleDescription("File Menu");
 		sort = new JMenu("Sort");
 		sort.getAccessibleContext()
 				.setAccessibleDescription("Sort Menu");
-
 		fileItems = new JMenuItem[7];
 		sortItems = new JMenuItem[3];
-
 		menuListener = new MenuListener();
+
 		// instantiate all menu items
 		for (int i = 0; i < 7; i++) {
 			if (i < 3) {
@@ -94,10 +98,7 @@ public class BankGUI extends JFrame {
 			fileItems[i].addActionListener(menuListener);
 		}
 
-		savings = new JRadioButton("Savings", true);
-		checking = new JRadioButton("Checking", false);
-		group = new ButtonGroup();
-
+		// instantiate all JLabels and JButtons
 		for (int i = 0; i < 7; i++) {
 			descriptLabels[i] = new JLabel();
 		}
@@ -118,6 +119,27 @@ public class BankGUI extends JFrame {
 		mainPanel.add(gridTextPanel, BorderLayout.CENTER);
 		mainPanel.add(boxPanel, BorderLayout.EAST);
 		add(mainPanel);
+
+		// display User Service Agreement
+		JOptionPane.showMessageDialog(new JFrame(),
+				"User Service Agreement:\n1. Leaving a field blank will"
+				+ " result in a"
+						+ " default 0 being applied to the empty field."
+						+ "\n2. "
+						+ "Date must be formatted in MM/DD/YYYY.\n3. "
+						+ "If a "
+						+ "field is filled with improperly fomatted "
+						+ "information, the field will attempt to "
+						+ "correct the "
+						+ "issue,\n        but if no proper "
+						+ "information can be "
+						+ "parsed, it will clear itself.\n4. Negative"
+						+ " values "
+						+ "are not logical and therefore will not be "
+						+ "accepted.\n5. When saving or loading a file,"
+						+ " the file extension is not needed (it is "
+						+ "automatically added).\n6. Account numbers "
+						+ "must be 10 or less digits.");
 	}
 
 	private void formatTextFields() {
@@ -268,8 +290,8 @@ public class BankGUI extends JFrame {
 	private void updateFields(Account accountData) {
 
 		if (accountData instanceof SavingsAccount) {
-			textInputs[0].setText(
-					Integer.toString(accountData.getAccountNumber()));
+			textInputs[0]
+					.setText(Integer.toString(accountData.getNumber()));
 			textInputs[1].setText(accountData.getOwner());
 			textInputs[2].setText(dateFormat
 					.format(accountData.getDateOpened().getTime()));
@@ -283,10 +305,11 @@ public class BankGUI extends JFrame {
 			savings.doClick();
 		}
 		if (accountData instanceof CheckingAccount) {
-			textInputs[0].setText(
-					Integer.toString(accountData.getAccountNumber()));
+			textInputs[0]
+					.setText(Integer.toString(accountData.getNumber()));
 			textInputs[1].setText(accountData.getOwner());
-			textInputs[2].setText("DATE");
+			textInputs[2].setText(dateFormat
+					.format(accountData.getDateOpened().getTime()));
 			textInputs[3]
 					.setText(Double.toString(accountData.getBalance()));
 			textInputs[4].setText(Double.toString(
@@ -303,14 +326,16 @@ public class BankGUI extends JFrame {
 					// Binary Load
 					String filename = getFileName(
 							"Please enter filename to load:");
-					File f = new File(filename);
+					File f = new File(filename + ".bin");
 
 					if (f.exists() && !f.isDirectory()) {
-						bankModel.loadBinary(filename);
+						bankModel.loadBinary(filename + ".bin");
 					} else
 						JOptionPane.showMessageDialog(new JFrame(),
 								"ERROR: FILE DOES NOT EXIST");
 				} catch (Exception e) {
+					JOptionPane.showMessageDialog(new JFrame(),
+							"FILE NOT READABLE OR USER CANCEL");
 				}
 			}
 			if (event.getSource() == fileItems[1]) {
@@ -318,7 +343,7 @@ public class BankGUI extends JFrame {
 					// Binary Save
 					String filename = getFileName(
 							"Please enter filename to save to:");
-					bankModel.saveBinary(filename);
+					bankModel.saveBinary(filename + ".bin");
 				} catch (Exception e) {
 				}
 			}
@@ -327,10 +352,10 @@ public class BankGUI extends JFrame {
 					// Text Load
 					String filename = getFileName(
 							"Please enter filename to load");
-					File f = new File(filename);
+					File f = new File(filename + ".txt");
 
 					if (f.exists() && !f.isDirectory()) {
-						bankModel.loadText(filename);
+						bankModel.loadText(filename + ".txt");
 					} else
 						JOptionPane.showMessageDialog(new JFrame(),
 								"ERROR: FILE DOES NOT EXIST");
@@ -342,7 +367,7 @@ public class BankGUI extends JFrame {
 					// text save
 					String filename = getFileName(
 							"Please enter filename to save to:");
-					bankModel.saveText(filename);
+					bankModel.saveText(filename + ".txt");
 				} catch (Exception e) {
 					// do nothing for cancel
 				}
@@ -352,10 +377,10 @@ public class BankGUI extends JFrame {
 				try {
 					String filename = getFileName(
 							"Please enter filename to load:");
-					File f = new File(filename);
+					File f = new File(filename + ".xml");
 
 					if (f.exists() && !f.isDirectory()) {
-						bankModel.loadXML(filename);
+						bankModel.loadXML(filename + ".xml");
 					} else
 						JOptionPane.showMessageDialog(new JFrame(),
 								"ERROR: FILE DOES NOT EXIST");
@@ -368,7 +393,7 @@ public class BankGUI extends JFrame {
 				try {
 					String filename = getFileName(
 							"Please enter filename to save to:");
-					bankModel.saveToXML(filename);
+					bankModel.saveToXML(filename + ".xml");
 				} catch (Exception e) {
 				}
 			}
@@ -378,7 +403,7 @@ public class BankGUI extends JFrame {
 			}
 			if (event.getSource() == sortItems[0]) {
 				// sort by account number
-				bankModel.sortByNum();
+				bankModel.sortByNumber();
 			}
 			if (event.getSource() == sortItems[1]) {
 				// sort by account owner
@@ -386,8 +411,6 @@ public class BankGUI extends JFrame {
 			}
 			if (event.getSource() == sortItems[2]) {
 				bankModel.sortByDateOpened();
-
-				// sort by date
 			}
 		}
 
@@ -401,6 +424,7 @@ public class BankGUI extends JFrame {
 				return filename;
 			} catch (Exception e) {
 				return "";
+
 			}
 		}
 	}
@@ -411,8 +435,8 @@ public class BankGUI extends JFrame {
 		public void mouseClicked(MouseEvent arg0) {
 
 			if (table.getSelectedRow() >= 0)
-				updateFields(bankModel
-						.getAccountInRow(table.getSelectedRow()));
+				updateFields(
+						bankModel.getAccount(table.getSelectedRow()));
 		}
 
 		@Override
@@ -431,8 +455,8 @@ public class BankGUI extends JFrame {
 		public void mousePressed(MouseEvent arg0) {
 
 			if (table.getSelectedRow() >= 0)
-				updateFields(bankModel
-						.getAccountInRow(table.getSelectedRow()));
+				updateFields(
+						bankModel.getAccount(table.getSelectedRow()));
 		}
 
 		@Override
@@ -467,7 +491,8 @@ public class BankGUI extends JFrame {
 							.parseInt(dateOpenedString.substring(3, 5));
 					int year = Integer.parseInt(
 							dateOpenedString.substring(6, 10));
-					GregorianCalendar dateOpened = new GregorianCalendar(
+					GregorianCalendar dateOpened = 
+							new GregorianCalendar(
 							year, month - 1, day);
 					double accountBalance = Double
 							.parseDouble(textInputs[3].getText());
@@ -504,12 +529,19 @@ public class BankGUI extends JFrame {
 								"ERROR: ACCOUNT NUMBER ALREADY EXISTS");
 					else if (errorCode == 3)
 						JOptionPane.showMessageDialog(new JFrame(),
-								"ERROR: ACCOUNT OWNER MUST HAVE A NAME.");
+							"ERROR: ACCOUNT OWNER MUST HAVE A NAME.");
+					else if (errorCode == 4) {
+						JOptionPane.showMessageDialog(new JFrame(),
+						"ERROR: CANNOT CREATE AN ACCOUNT IN FUTURE.");
+					} else if (errorCode == 5) {
+						JOptionPane.showMessageDialog(new JFrame(),
+								"ERROR: CANNOT HAVE NEGATIVE DATA.");
+					}
 
 				} catch (Exception e) {
 					// display error message to user
 					JOptionPane.showMessageDialog(null,
-							"Data formatted incorrectly.\nPlease try again.",
+					"Data formatted incorrectly.\nPlease try again.",
 							"Error", JOptionPane.INFORMATION_MESSAGE);
 				}
 			}
@@ -519,12 +551,14 @@ public class BankGUI extends JFrame {
 					int result = JOptionPane.showConfirmDialog(
 							(Component) null, "Are you sure?",
 							"Confirm", JOptionPane.OK_CANCEL_OPTION);
-					if(result == 0)
+					if (result == 0)
 						bankModel.delete(table.getSelectedRow());
 				} catch (Exception e) {
 					// display error message to user
 					JOptionPane.showMessageDialog(null,
-							"No account is selected.\nPlease select an account and try again.",
+							"No account is selected."
+							+ "\nPlease select an account and "
+							+ "try again.",
 							"Error", JOptionPane.INFORMATION_MESSAGE);
 				}
 			}
@@ -548,7 +582,8 @@ public class BankGUI extends JFrame {
 							.parseInt(dateOpenedString.substring(3, 5));
 					int year = Integer.parseInt(
 							dateOpenedString.substring(6, 10));
-					GregorianCalendar dateOpened = new GregorianCalendar(
+					GregorianCalendar dateOpened = 
+							new GregorianCalendar(
 							year, month - 1, day);
 					double accountBalance = Double
 							.parseDouble(textInputs[3].getText());
@@ -572,14 +607,22 @@ public class BankGUI extends JFrame {
 					}
 
 					// send all collected data to bankModel
-					bankModel.update(number, owner, dateOpened,
+					int errorCode = bankModel.update(number, owner, dateOpened,
 							accountBalance, monthlyFee, interestRate,
 							minimumBalance, isSavings,
 							table.getSelectedRow());
+					
+					if (errorCode == 1)
+					{
+						JOptionPane.showMessageDialog(null,
+								"Invalid data for update. Please try again.",
+								"Error", JOptionPane.INFORMATION_MESSAGE);
+					}
 				} catch (Exception e) {
 					// display error message to user
 					JOptionPane.showMessageDialog(null,
-							"No account is selected to update.\nPlease select an account and try again.",
+							"No account is selected to update.\nPlease "
+							+ "select an account and try again.",
 							"Error", JOptionPane.INFORMATION_MESSAGE);
 				}
 			}

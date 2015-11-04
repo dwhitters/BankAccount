@@ -1,92 +1,186 @@
 package project3;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.PrintWriter;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.GregorianCalendar;
 import javax.swing.table.AbstractTableModel;
-import javax.xml.parsers.*;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.*;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
 import org.w3c.dom.*;
 
+/***********************************************************************
+ * This class creates a BankModel, which is an AbstractTableModel. It
+ * does all calculations, storage, and banking decisions. It pushes data
+ * to BankGUI and lets BankGUI retrieve data from it. It also has
+ * functionality to save and load it accounts from several file types.
+ * @author Allen Sietsema
+ * @author David Whitters
+ * @version 1.49
+ **********************************************************************/
+
 public class BankModel extends AbstractTableModel {
 
-	// storage for accounts
-	public static ArrayList<Account> accounts = new ArrayList<Account>();
+	/** variable holds all created accounts */
+	public ArrayList<Account> accounts = new ArrayList<Account>();
 
-	//format variables
-	private SimpleDateFormat date = new SimpleDateFormat("MM/dd/yyyy");
+	/**
+	 * variable holds the custom SimpleDateFormat used for all date
+	 * values
+	 */
+	private SimpleDateFormat simpleDateFormat;
 
-	// table information
+	/** variable holds names of JTable columns */
 	private String columnNames[];
 
+	/*******************************************************************
+	 * Constructor creates the BankModel.
+	 ******************************************************************/
 	public BankModel() {
-		// create and add hard-coded accounts
-		SavingsAccount savingsTest1 = new SavingsAccount(125, "Bob",
-				new GregorianCalendar(2015, 10 - 1, 25), 100, .01,
-				5.00);
-		SavingsAccount savingsTest2 = new SavingsAccount(123, "Allen",
-				new GregorianCalendar(2016, 9 - 1, 30), 100, .01, 5.00);
-		accounts.add(savingsTest1);
-		accounts.add(savingsTest2);
 
-		// set column names
+		// define JTable column names
 		columnNames = new String[] { "Account Number", "Account Owner",
 				"Date Opened", "Account Balance", "Monthly Fee",
 				"Interest Rate", "Minimum Balance" };
+
+		// initialize simpleDateFormat
+		simpleDateFormat = new SimpleDateFormat("MM/dd/yyyy");
 	}
 
-	public void update(int number, String owner,
+	/*******************************************************************
+	 * Updates (edits) an existing account in the BankModel.
+	 * @param number integer account number
+	 * @param owner String name of account owner
+	 * @param dateOpened GregorianCalendar account open date
+	 * @param balance double account balance
+	 * @param monthlyFee double account monthlyFee
+	 * @param interestRate double account interestRate
+	 * @param minimumBalance double account minimum balance
+	 * @param isSavings boolean telling if user wants the account to be
+	 *            a savings account or checking account
+	 * @param selectedRow integer telling what account should be edited
+	 ******************************************************************/
+	public int update(int number, String owner,
 			GregorianCalendar dateOpened, double balance,
 			double monthlyFee, double interestRate,
 			double minimumBalance, boolean isSavings, int selectedRow) {
 
-		// update data depending on account type
-		if (isSavings == true) {
-			// update data
-			accounts.get(selectedRow).setNumber(number);
-			accounts.get(selectedRow).setOwner(owner);
-			accounts.get(selectedRow).setDateOpened(dateOpened);
-			accounts.get(selectedRow).setBalance(balance);
-			((SavingsAccount) accounts.get(selectedRow))
-					.setInterestRate(interestRate);
-			((SavingsAccount) accounts.get(selectedRow))
-					.setMinimumBalance(minimumBalance);
-		} else {
-			// update data
-			accounts.get(selectedRow).setNumber(number);
-			accounts.get(selectedRow).setOwner(owner);
-			accounts.get(selectedRow).setDateOpened(dateOpened);
-			accounts.get(selectedRow).setBalance(balance);
-			((CheckingAccount) accounts.get(selectedRow))
-					.setMonthlyFee(monthlyFee);
+		//declare variables
+		int errorCode = 0;
+		
+		//checks for valid data
+		if ((monthlyFee >= 0) && (interestRate >= 0)
+				&& (minimumBalance >= 0) && (number > 0)
+				&& (balance >= 0) && (balance >= minimumBalance))
+			// update data depending on account type
+			if (isSavings == true) {
+				// update data
+				accounts.get(selectedRow).setNumber(number);
+				accounts.get(selectedRow).setOwner(owner);
+				accounts.get(selectedRow).setDateOpened(dateOpened);
+				accounts.get(selectedRow).setBalance(balance);
+				((SavingsAccount) accounts.get(selectedRow))
+						.setInterestRate(interestRate);
+				((SavingsAccount) accounts.get(selectedRow))
+						.setMinimumBalance(minimumBalance);
+			} else {
+				// update data
+				accounts.get(selectedRow).setNumber(number);
+				accounts.get(selectedRow).setOwner(owner);
+				accounts.get(selectedRow).setDateOpened(dateOpened);
+				accounts.get(selectedRow).setBalance(balance);
+				((CheckingAccount) accounts.get(selectedRow))
+						.setMonthlyFee(monthlyFee);
+			}
+		else {
+			errorCode = 1;
 		}
-
-		// tell table to update
+		
+		// update table
 		this.fireTableDataChanged();
+		
+		//return errorCode
+		return errorCode;
 	}
 
+	/*******************************************************************
+	 * Adds an account to accounts ArrayList.
+	 * @param number integer account number
+	 * @param owner String name of account owner
+	 * @param dateOpened GregorianCalendar object that is account open
+	 *            date
+	 * @param balance double that is account balance
+	 * @param monthlyFee double that is account monthly fee
+	 * @param interestRate double that is account interest rate
+	 * @param minimumBalance double that is account minimum balance
+	 * @param isSavings boolean tells if the user selected savings or
+	 *            checking account.
+	 * @return errorCode integer representing error in date supplied.
+	 *         Returns 1 if balance is smaller than minimum balance; 2
+	 *         if there is account number already exists; 3 if there is
+	 *         no owner name; 4 if open date is in future; 5 if data
+	 *         contains negative numbers.
+	 ******************************************************************/
 	public int add(int number, String owner,
 			GregorianCalendar dateOpened, double balance,
 			double monthlyFee, double interestRate,
 			double minimumBalance, boolean isSavings) {
 
+		// declare and initialize variables
 		int errorCode = 0;
 
+		// check if balance is smaller than minimum balance
+		if ((minimumBalance > balance) && (isSavings == false)) {
+			errorCode = 1;
+		}
+
+		// check to see if account number already exists
 		for (int i = 0; i < accounts.size(); i++) {
-			if (accounts.get(i).getAccountNumber() == number)
+			if (accounts.get(i).getNumber() == number)
 				errorCode = 2;
 		}
+
+		// check to see if account owner name is not blank
 		if (owner.equals("")) {
 			errorCode = 3;
 		}
-		if (minimumBalance <= balance && errorCode == 0) {
+
+		// check to see if date opened is in the future
+		if (dateOpened.compareTo(new GregorianCalendar()) > 0) {
+			errorCode = 4;
+		}
+
+		// check to see if data contains negative values
+		if (((number < 0) || (balance < 0)
+				|| (interestRate < 0) || (minimumBalance < 0)) && (isSavings == true)) {
+			errorCode = 5;
+		}
+		if (((number < 0) || (balance < 0) || (monthlyFee < 0))
+				&& (isSavings == false)) {
+			errorCode = 5;
+		}
+
+		// create the new account if no error in data
+		if (errorCode == 0) {
+
 			// add new data to account type
 			if (isSavings == true) {
+
 				// create savings account
 				SavingsAccount addedSavingsAccount = new SavingsAccount(
 						number, owner, dateOpened, balance,
@@ -95,6 +189,7 @@ public class BankModel extends AbstractTableModel {
 				// add savings account to array
 				accounts.add(addedSavingsAccount);
 			} else {
+
 				// create checking account
 				CheckingAccount addedCheckingAccount = new CheckingAccount(
 						number, owner, dateOpened, balance, monthlyFee);
@@ -103,48 +198,86 @@ public class BankModel extends AbstractTableModel {
 				accounts.add(addedCheckingAccount);
 			}
 
-			// tell table to update
+			// update table
 			this.fireTableDataChanged();
-		} else if (minimumBalance > balance)
-			errorCode = 1;
+		}
 
+		// return errorCode
 		return errorCode;
 	}
 
+	/*******************************************************************
+	 * Deletes an account from the accounts ArrayList.
+	 * @param selectedRow integer selected account row in JTable
+	 ******************************************************************/
 	public void delete(int selectedRow) {
-		// delete defined row
+
+		// delete account in selected row
 		accounts.remove(selectedRow);
 
-		// tell table to update
+		// update table
 		this.fireTableDataChanged();
 	}
 
-	public Account getAccountInRow(int row) {
-		// return account in defined row
-		return accounts.get(row);
+	/*******************************************************************
+	 * Returns account in selected row.
+	 * @param selecedRow integer selected row in JTable
+	 * @return account Account at parameter defined row
+	 ******************************************************************/
+	public Account getAccount(int selectedRow) {
+
+		// return account in selected row
+		return accounts.get(selectedRow);
 	}
 
+	/*******************************************************************
+	 * Returns the number of columns in the JTable.
+	 * @return numberOfColumns number of columns in JTable
+	 ******************************************************************/
 	@Override
 	public int getColumnCount() {
 
+		// declare variables
+		int numberOfColumns = columnNames.length;
+
 		// return number of columns
-		return columnNames.length;
+		return numberOfColumns;
 	}
 
+	/*******************************************************************
+	 * Returns number of rows in JTable.
+	 * @return numberOfRows integer number of rows in JTable
+	 ******************************************************************/
 	@Override
 	public int getRowCount() {
 
-		// return number of accounts
-		return accounts.size();
+		// declare variables
+		int numberOfRows = accounts.size();
+
+		// return numberOfRows
+		return numberOfRows;
 	}
 
+	/*******************************************************************
+	 * Returns the column name for a given column number in JTable.
+	 * @param column integer column in JTable
+	 * @return name of given column
+	 ******************************************************************/
 	@Override
 	public String getColumnName(int column) {
 
-		// return column name at defined column
+		// return column name
 		return columnNames[column];
 	}
 
+	/*******************************************************************
+	 * Returns the data to be entered in a specific location on the
+	 * JTable.
+	 * @param rowIndex integer row number
+	 * @param columnIndex integer column number
+	 * @return Object data to be entered in JTable at a defined column
+	 *         and row
+	 ******************************************************************/
 	@Override
 	public Object getValueAt(int rowIndex, int columnIndex) {
 
@@ -152,89 +285,132 @@ public class BankModel extends AbstractTableModel {
 		if (accounts.get(rowIndex) instanceof SavingsAccount) {
 			switch (columnIndex) {
 			case 0:
-				return accounts.get(rowIndex).getAccountNumber();
+				return accounts.get(rowIndex).getNumber();
 			case 1:
 				return accounts.get(rowIndex).getOwner();
 			case 2:
-				return date.format(accounts.get(rowIndex)
+				return simpleDateFormat.format(accounts.get(rowIndex)
 						.getDateOpened().getTime());
 			case 3:
-				return String.format("$%.2f", accounts.get(rowIndex).getBalance());
+				return String.format("$%.2f",
+						accounts.get(rowIndex).getBalance());
 			case 4:
 				return "";
 			case 5:
-				return String.format("%.3f%%", ((SavingsAccount) accounts.get(rowIndex)).getInterestRate());
+				return String
+						.format("%.3f%%",
+								((SavingsAccount) accounts
+										.get(rowIndex))
+												.getInterestRate());
 			case 6:
-				return String.format("$%.2f", ((SavingsAccount) accounts.get(rowIndex))
-						.getMinimumBalance());
+				return String
+						.format("$%.2f",
+								((SavingsAccount) accounts
+										.get(rowIndex))
+												.getMinimumBalance());
 			}
 		} else {
 			switch (columnIndex) {
 			case 0:
-				return accounts.get(rowIndex).getAccountNumber();
+				return accounts.get(rowIndex).getNumber();
 			case 1:
 				return accounts.get(rowIndex).getOwner();
 			case 2:
-				return date.format(accounts.get(rowIndex)
+				return simpleDateFormat.format(accounts.get(rowIndex)
 						.getDateOpened().getTime());
 			case 3:
-				return String.format("$%.2f", accounts.get(rowIndex).getBalance());
+				return String.format("$%.2f",
+						accounts.get(rowIndex).getBalance());
 			case 4:
-				return String.format("$%.2f", ((CheckingAccount) accounts.get(rowIndex))
-						.getMonthlyFee());
+				return String
+						.format("$%.2f",
+								((CheckingAccount) accounts
+										.get(rowIndex))
+												.getMonthlyFee());
 			case 5:
 				return "";
 			case 6:
 				return "";
 			}
 		}
-		// default return
-		return " ";
+
+		// return blank if nothing can be found
+		return "";
 	}
 
-	public void sortByNum() {
-		if (accounts.size() > 1) {
-			Collections.sort(accounts, new AccountNumberComparator());
-			this.fireTableRowsUpdated(0, accounts.size() - 1);
-		}
+	/*******************************************************************
+	 * Sorts the ArrayList accounts by account number.
+	 ******************************************************************/
+	public void sortByNumber() {
+
+		// sort accounts by account number
+		Collections.sort(accounts, new AccountNumberComparator());
+
+		// update table
+		this.fireTableRowsUpdated(0, accounts.size() - 1);
 	}
 
+	/*******************************************************************
+	 * Sort accounts ArrayList by account name.
+	 ******************************************************************/
 	public void sortByName() {
-		if (accounts.size() > 1) {
-			Collections.sort(accounts, new AccountOwnerComparator());
-			this.fireTableRowsUpdated(0, accounts.size() - 1);
-		}
+
+		// sort accounts by account name
+		Collections.sort(accounts, new AccountOwnerComparator());
+
+		// update table
+		this.fireTableRowsUpdated(0, accounts.size() - 1);
 	}
 
+	/*******************************************************************
+	 * Sorts accounts ArrayList by date opened.
+	 ******************************************************************/
 	public void sortByDateOpened() {
+
+		// sort accounts by date opened
 		Collections.sort(accounts, new DateComparator());
+
+		// update table
 		this.fireTableDataChanged();
 	}
 
+	/*******************************************************************
+	 * Loads and replaces data in account ArrayList with data from a
+	 * Binary file.
+	 * @param filename String name of BinaryFile to be opened
+	 ******************************************************************/
 	public void loadBinary(String filename) {
+
 		try {
-			// Sets accounts equal to the ArrayList read from the
-			// file
-			ArrayList<Account> accounts = null;
+			// declare variables
 			FileInputStream fis = null;
 			ObjectInputStream ois = null;
 
 			try {
-				// Read from disk using FileInputStream
+
+				// read from disk using FileInputStream
 				fis = new FileInputStream(filename);
-				// Read object using ObjectInputStream
+
+				// read object using ObjectInputStream
 				ois = new ObjectInputStream(fis);
-				// Read an object
+
+				// read an object
 				Object obj = ois.readObject();
+
 				if (obj instanceof ArrayList) {
-					// Cast object to accounts as an ArrayList
-					// containing
-					// Account objects
-					accounts = (ArrayList<Account>) obj;
+
+					// cast object to an account ArrayList and replace
+					// accounts with new ArrayList
+					this.accounts = (ArrayList<Account>) obj;
+
+					// update table
+					this.fireTableDataChanged();
 				}
 			} catch (Exception e) {
+				System.out.println("Binary Load Error.");
 			} finally {
-				// Close both input streams
+
+				// close input streams
 				fis.close();
 				ois.close();
 			}
@@ -245,19 +421,26 @@ public class BankModel extends AbstractTableModel {
 		}
 	}
 
+	/*******************************************************************
+	 * Saves data from accounts ArrayList as a Binary file.
+	 * @param filename String name of new file
+	 ******************************************************************/
 	public void saveBinary(String filename) {
+
 		try {
-			// Saves the arraylist of accounts to the passed filename
+			// declare variables
 			FileOutputStream fos = null;
 			ObjectOutputStream os = null;
 
 			try {
 				fos = new FileOutputStream(filename);
 				os = new ObjectOutputStream(fos);
-				os.writeObject(BankModel.accounts);
+				os.writeObject(accounts);
 			} catch (Exception e) {
+				System.out.println("Binary Save Error.");
 			} finally {
-				// Close both output streams
+
+				// close output streams
 				fos.close();
 				os.close();
 			}
@@ -266,18 +449,25 @@ public class BankModel extends AbstractTableModel {
 		}
 	}
 
+	/*******************************************************************
+	 * Loads and replaces accounts with data from text file.
+	 * @param filename String name of file to be opened
+	 ******************************************************************/
 	public void loadText(String filename) {
+
 		try {
-			int fileLength = 0;
+			// declare variables
 			String lineData = "";
 			String strSplit[] = new String[14];
 			String date[] = new String[3];
 			int iDate[] = new int[3];
 			ArrayList<String> savingsData = new ArrayList<String>();
 			ArrayList<String> checkingData = new ArrayList<String>();
+			accounts.clear();
 			FileReader fr = null;
 			BufferedReader br = null;
-			ArrayList<Account> accounts = new ArrayList<Account>();
+
+			// load file
 			try {
 				fr = new FileReader(filename);
 				br = new BufferedReader(fr);
@@ -304,12 +494,12 @@ public class BankModel extends AbstractTableModel {
 								Integer.parseInt(savingsData.get(1)),
 								savingsData.get(2),
 								new GregorianCalendar(iDate[2],
-										iDate[0], iDate[1]),
+										iDate[0] - 1, iDate[1]),
 								Double.parseDouble(savingsData.get(4)),
 								Double.parseDouble(savingsData.get(6)),
 								Double.parseDouble(savingsData.get(5)));
 
-						accounts.add(act);
+						this.accounts.add(act);
 					} else {
 						checkingData.clear();
 						for (int i = 0; i < 12; i++)
@@ -326,27 +516,35 @@ public class BankModel extends AbstractTableModel {
 								Integer.parseInt(checkingData.get(1)),
 								checkingData.get(2),
 								new GregorianCalendar(iDate[2],
-										iDate[0], iDate[1]),
+										iDate[0] - 1, iDate[1]),
 								Double.parseDouble(checkingData.get(4)),
 								Double.parseDouble(
 										checkingData.get(5)));
 
-						accounts.add(act);
+						this.accounts.add(act);
 					}
 				}
 			} catch (Exception e) {
 				System.out.println(e.getMessage());
+				System.out.println("Error");
 			} finally {
 				fr.close();
 				br.close();
+				this.fireTableDataChanged();
 			}
 			this.fireTableDataChanged();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+		this.fireTableDataChanged();
 	}
 
+	/*******************************************************************
+	 * Saves account ArrayList to a text file.
+	 * @param filename name of new text file
+	 ******************************************************************/
 	public void saveText(String filename) {
+
 		try {
 			FileWriter write = null;
 			PrintWriter pw = null;
@@ -354,14 +552,13 @@ public class BankModel extends AbstractTableModel {
 				write = new FileWriter(filename);
 				pw = new PrintWriter(write);
 
-				for (int i = 0; i < BankModel.accounts.size(); i++) {
-					if (BankModel.accounts
-							.get(i) instanceof SavingsAccount) {
-						SavingsAccount act = (SavingsAccount) BankModel.accounts
+				for (int i = 0; i < accounts.size(); i++) {
+					if (accounts.get(i) instanceof SavingsAccount) {
+						SavingsAccount act = (SavingsAccount) accounts
 								.get(i);
 						pw.println(act.toString());
 					} else {
-						CheckingAccount act = (CheckingAccount) BankModel.accounts
+						CheckingAccount act = (CheckingAccount) accounts
 								.get(i);
 						pw.println(act.toString());
 					}
@@ -375,10 +572,15 @@ public class BankModel extends AbstractTableModel {
 		}
 	}
 
+	/*******************************************************************
+	 * Loads and replaces account ArrayList with data from a XML file.
+	 * @param filename String name of file to be opened
+	 ******************************************************************/
 	public void loadXML(String filename) {
+
 		ArrayList<Account> accounts = new ArrayList<Account>();
 		try {
-			File fXmlFile = new File(filename);
+			File fXmlFile = new File((filename));
 			DocumentBuilderFactory dbFactory = DocumentBuilderFactory
 					.newInstance();
 			DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
@@ -462,7 +664,12 @@ public class BankModel extends AbstractTableModel {
 		this.fireTableDataChanged();
 	}
 
+	/*******************************************************************
+	 * Saves accounts ArrayList to an XML file.
+	 * @return filename String name of new XML file
+	 ******************************************************************/
 	public void saveToXML(String filename) {
+
 		try {
 			DocumentBuilderFactory docFactory = DocumentBuilderFactory
 					.newInstance();
@@ -481,8 +688,8 @@ public class BankModel extends AbstractTableModel {
 
 				// set attribute to staff element
 				Attr num = doc.createAttribute("number");
-				num.setValue(Integer
-						.toString(accounts.get(i).getAccountNumber()));
+				num.setValue(
+						Integer.toString(accounts.get(i).getNumber()));
 				account.setAttributeNode(num);
 
 				if (accounts.get(i) instanceof SavingsAccount) {
@@ -496,8 +703,8 @@ public class BankModel extends AbstractTableModel {
 
 					// date elements
 					Element date = doc.createElement("date");
-					date.appendChild(
-							doc.createTextNode(act.getStrDateOpened()));
+					date.appendChild(doc
+							.createTextNode(act.getDateOpenedString()));
 					account.appendChild(date);
 
 					// balance elements
@@ -509,7 +716,7 @@ public class BankModel extends AbstractTableModel {
 					// owner elements
 					Element owner = doc.createElement("owner");
 					owner.appendChild(
-							doc.createTextNode(act.getAccountOwner()));
+							doc.createTextNode(act.getOwner()));
 					account.appendChild(owner);
 
 					// minimum balance elements
@@ -542,8 +749,8 @@ public class BankModel extends AbstractTableModel {
 
 					// date elements
 					Element date = doc.createElement("date");
-					date.appendChild(
-							doc.createTextNode(act.getStrDateOpened()));
+					date.appendChild(doc
+							.createTextNode(act.getDateOpenedString()));
 					account.appendChild(date);
 
 					// balance elements
@@ -555,7 +762,7 @@ public class BankModel extends AbstractTableModel {
 					// owner elements
 					Element owner = doc.createElement("owner");
 					owner.appendChild(
-							doc.createTextNode(act.getAccountOwner()));
+							doc.createTextNode(act.getOwner()));
 					account.appendChild(owner);
 
 					// minimum balance elements
@@ -585,8 +792,7 @@ public class BankModel extends AbstractTableModel {
 			Transformer transformer = transformerFactory
 					.newTransformer();
 			DOMSource source = new DOMSource(doc);
-			StreamResult result = new StreamResult(
-					new File(filename + ".xml"));
+			StreamResult result = new StreamResult(new File(filename));
 
 			transformer.transform(source, result);
 
