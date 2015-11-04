@@ -170,9 +170,9 @@ public class BankGUI extends JFrame {
 
 		mainPanel.setPreferredSize(new Dimension(500, 500));
 		tablePanel.setPreferredSize(new Dimension(500, 250));
-		gridLabelPanel.setPreferredSize(new Dimension(125, 250));
-		gridTextPanel.setPreferredSize(new Dimension(275, 250));
-		boxPanel.setPreferredSize(new Dimension(100, 250));
+		gridLabelPanel.setPreferredSize(new Dimension(150, 250));
+		gridTextPanel.setPreferredSize(new Dimension(240, 250));
+		boxPanel.setPreferredSize(new Dimension(110, 250));
 
 		mainPanel.setLayout(new BorderLayout());
 		gridLabelPanel.setLayout(new GridLayout(8, 1));
@@ -230,7 +230,7 @@ public class BankGUI extends JFrame {
 		// Format box layout
 		for (i = 0; i < 4; i++) {
 			modifyButton[i].setAlignmentX(Component.CENTER_ALIGNMENT);
-			modifyButton[i].setMaximumSize(new Dimension(75,
+			modifyButton[i].setMaximumSize(new Dimension(95,
 					modifyButton[i].getMinimumSize().height));
 		}
 		boxPanel.add(Box.createRigidArea(new Dimension(1, 40)));

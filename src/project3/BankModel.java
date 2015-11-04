@@ -145,7 +145,7 @@ public class BankModel extends AbstractTableModel {
 		int errorCode = 0;
 
 		// check if balance is smaller than minimum balance
-		if ((minimumBalance > balance) && (isSavings == false)) {
+		if ((minimumBalance > balance) && (isSavings == true)) {
 			errorCode = 1;
 		}
 
